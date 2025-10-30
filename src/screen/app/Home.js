@@ -12,9 +12,9 @@ import {
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import Header from '../../Assets/Component/Header';
 import Constants, {FONTS} from '../../Assets/Helpers/constant';
-import {navigate} from '../../../navigationRef';
-import {DashboardIcon, RightarrowIcon, TruckIcon} from '../../../Theme';
-import {LoadContext, ToastContext} from '../../../App';
+import {goBack, navigate} from '../../../navigationRef';
+import {BackIcon, DashboardIcon, Down, DownarrIcon, RightarrowIcon, TruckIcon} from '../../../Theme';
+import {AddressContext, LoadContext, LocationContext, ToastContext, UserContext} from '../../../App';
 import {GetApi} from '../../Assets/Helpers/Service';
 
 const Project = () => {
@@ -22,6 +22,9 @@ const Project = () => {
   const [toast, setToast] = useContext(ToastContext);
   const [loading, setLoading] = useContext(LoadContext);
   const [orderlist, setorderlist] = useState([]);
+  const [currentLocation, setcurrentLocation] = useContext(LocationContext);
+  const [locationadd, setlocationadd] = useContext(AddressContext);
+  const [user, setuser] = useContext(UserContext);
 
   useEffect(() => {
     getcategory();
@@ -47,12 +50,37 @@ const Project = () => {
       <ImageBackground
         source={require('../../Assets/Images/homebg.png')}
         style={styles.bgimg}>
-        <Header transbgcolour={true} backcolor={Constants.black} />
+
+        <View style={styles.toppart}>
+              <View style={styles.mainpart}>
+                <View style={{ flexDirection: 'row',alignItems:'center', gap: 15, height: '100%' }}>
+                  <BackIcon color={Constants.black} style={styles.aliself} onPress={()=>goBack()}/>
+                    <TouchableOpacity style={styles.addtxt} onPress={()=>navigate('Shipping')}>
+                  <Text style={styles.backtxt} numberOfLines={1}>{user?.address?user?.address:locationadd}</Text>
+                  <Down height={20} width={20} color={Constants.white}/>
+                  </TouchableOpacity>
+                </View>
+                <TouchableOpacity onPress={()=>navigate('App',{screen:'Profile'})}
+                  >
+                <Image
+                  source={
+                    user?.img
+                      ? {
+                          uri: user.img
+                        }
+                      : require('../../Assets/Images/profile3.png')
+                  }
+                  style={styles.hi}
+                />
+                </TouchableOpacity>
+              </View>
+            </View>
+
       </ImageBackground>
       <FlatList
         data={orderlist}
         numColumns={2}
-        style={{paddingHorizontal: 10, marginTop: 20}}
+        style={{paddingHorizontal: 10}}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={() => (
           <TouchableOpacity
@@ -151,10 +179,11 @@ const styles = StyleSheet.create({
     backgroundColor: Constants.custom_black,
     color: Constants.custom_black,
     borderRadius: 15,
-    marginVertical: 10,
+    marginBottom: 10,
     width: '95%',
     alignSelf: 'center',
     padding: 7,
+    marginTop:25
   },
   inputbox: {
     backgroundColor: Constants.custom_black,
@@ -209,4 +238,41 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     gap: 15,
   },
+  
+
+  backtxt: {
+    color: Constants.black,
+    fontSize: 14,
+    fontFamily: FONTS.Bold,
+  },
+  toppart: {
+    flexDirection: 'row',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    // backgroundColor: Constants.custom_black
+  },
+  addtxt:{
+    flexDirection:'row',
+    gap:5,
+    width:'70%'
+  },
+  hi: {
+    marginRight: 10,
+    height: 35,
+    width: 35,
+    borderRadius: 35,
+    // resizeMode:'cover'
+  },
+  aliself: {
+    alignSelf: 'center',
+    // fontWeight:'bold'
+    // fontFamily:FONTS.Bold
+  },
+  mainpart:{
+    flex:1,
+    flexDirection:'row',
+    justifyContent:'space-between',
+    paddingVertical:5,
+    // backgroundColor:'transparent'
+  }
 });

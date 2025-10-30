@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   redeembtn: {
     color: Constants.white,
     fontSize: 16,
-    fontFamily: FONTS.dmsansedium,
+    fontFamily: FONTS.Medium,
     backgroundColor: Constants.custom_yellow,
     paddingHorizontal: 10,
     paddingVertical: 5,
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
   deliveredbtn: {
     color: Constants.white,
     fontSize: 16,
-    fontFamily: FONTS.dmsansedium,
+    fontFamily: FONTS.Medium,
     backgroundColor: '#17AD53',
     paddingHorizontal: 10,
     paddingVertical: 5,
@@ -237,12 +237,12 @@ const styles = StyleSheet.create({
   },
   name: {
     color: Constants.black,
-    fontFamily: FONTS.dmsanssemibold,
+    fontFamily: FONTS.SemiBold,
     fontSize: 14,
   },
   name2: {
     color: Constants.white,
-    fontFamily: FONTS.dmsanssemibold,
+    fontFamily: FONTS.SemiBold,
     fontSize: 14,
     alignSelf: 'center',
   },

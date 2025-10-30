@@ -242,6 +242,7 @@ const Project = () => {
             <ScrollView
               style={styles.btmpart}
               keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
             >
               <Image
                 source={require('../../Assets/Images/project.png')}

@@ -40,8 +40,8 @@ const VendorForm = () => {
   const [user, setuser] = useContext(UserContext);
   const [status, setStatus] = useState();
   const [model, setmodel] = useState(false);
-  const [updateModel, setUpdateModel] = useState(false);
-  const [alreadyusedmodel, setalreadyusedmodel] = useState(false);
+  // const [updateModel, setUpdateModel] = useState(false);
+  // const [alreadyusedmodel, setalreadyusedmodel] = useState(false);
   const [from, setFrom] = useState('');
   const [userDetail, setUserDetail] = useState({
     username: '',
@@ -121,15 +121,15 @@ const VendorForm = () => {
           await AsyncStorage.setItem(
             'userDetail', JSON.stringify(newdata),
           );
-          setuser(res.data);
+          setuser(newdata);
           reset('Vendortab');
         } else {
-          if (!alreadyusedmodel) {
-            setTimeout(()=>{
+          // if (!alreadyusedmodel) {
+          //   setTimeout(()=>{
               setmodel(true);
-              setalreadyusedmodel(true);
-            },500)
-          }
+            //   setalreadyusedmodel(true);
+            // },500)
+          // }
           setStatus(res?.data?.verified ? res?.data?.verified : 'Pending');
           setUserDetail({
             ...res?.data,
@@ -177,6 +177,7 @@ const VendorForm = () => {
         formData.append('username', userDetail.username);
         formData.append('phone', userDetail.phone);
         formData.append('address', userDetail.address);
+        formData.append('location', JSON.stringify(userDetail?.location));
         formData.append('country', userDetail.country);
         formData.append('shop_name', userDetail.shop_name);
         formData.append('tax_reg_no', userDetail.tax_reg_no);
@@ -194,8 +195,13 @@ const VendorForm = () => {
 
         if (res.status) {
           // setToast(res.data.message);
-          setUpdateModel(true)
-          getProfile();
+          // setUpdateModel(true)
+           const newdata=res.data
+          newdata.token=user.token
+          await AsyncStorage.setItem(
+            'userDetail', JSON.stringify(newdata),
+          );
+          reset('Vendortab');
         } else {
         }
       },
@@ -547,7 +553,7 @@ const VendorForm = () => {
           </View>
         </View>
       </Modal>
-      <Modal transparent={true} visible={updateModel} animationType="slide">
+      {/* <Modal transparent={true} visible={updateModel} animationType="slide">
                             <View
                               style={{
                                 justifyContent: 'center',
@@ -570,7 +576,7 @@ const VendorForm = () => {
                                 </View>
                               </View>
                             </View>
-                          </Modal>
+                          </Modal> */}
     </View>
   );
 };

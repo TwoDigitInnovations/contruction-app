@@ -144,7 +144,7 @@ const ForgotPassword = props => {
 
   return (
     <View style={styles.container}>
-      <View style={{height: '55%'}}>
+      <View style={{height: '50%'}}>
         <ImageBackground
           source={require('../../Assets/Images/topbg.png')}
           style={styles.imgbg}
@@ -159,7 +159,7 @@ const ForgotPassword = props => {
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                     style={{flex:1}}
                   >
-      <ScrollView style={styles.btmpart}>
+      <ScrollView style={styles.btmpart} showsVerticalScrollIndicator={false}>
         {showEmail && (
           <View>
             <Text style={styles.btmtext}>Email</Text>
@@ -260,21 +260,21 @@ const ForgotPassword = props => {
         )}
         {showEmail && (
           <TouchableOpacity
-            style={[styles.button, styles.shadowProp]}
+            style={[styles.button, styles.shadowProp,{marginTop:50}]}
             onPress={() => sendotp()}>
             <Text style={styles.buttontxt}>Next</Text>
           </TouchableOpacity>
         )}
         {showOtp && (
           <TouchableOpacity
-            style={[styles.button, styles.shadowProp]}
+            style={[styles.button, styles.shadowProp,{marginTop:50}]}
             onPress={() => verifyotp()}>
             <Text style={styles.buttontxt}>Verify OTP</Text>
           </TouchableOpacity>
         )}
         {showPassword && (
           <TouchableOpacity
-            style={[styles.button, styles.shadowProp]}
+            style={[styles.button, styles.shadowProp,{marginTop:50}]}
             onPress={() => submit()}>
             <Text style={styles.buttontxt}>Submit</Text>
           </TouchableOpacity>
@@ -282,7 +282,7 @@ const ForgotPassword = props => {
         <View style={styles.signtxtcov}>
           {/* <Text style={styles.signtxt}>Don't have an Account ?</Text> */}
           <TouchableOpacity onPress={() => navigate('SignUp')}>
-            <Text style={styles.signtxt2}>or Sign In</Text>
+            <Text style={[styles.signtxt2,{marginBottom: 50}]}>or Sign In</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

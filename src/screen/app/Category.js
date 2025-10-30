@@ -3,6 +3,7 @@ import {
   Easing,
   Image,
   ImageBackground,
+  KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
@@ -14,14 +15,14 @@ import {
 import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
 import Constants, {FONTS, Googlekey} from '../../Assets/Helpers/constant';
 import Header from '../../Assets/Component/Header';
-import {LocationIcon} from '../../../Theme';
+import {BackIcon, LocationIcon} from '../../../Theme';
 import MapView, {
   Marker,
   Polygon,
   Polyline,
   PROVIDER_GOOGLE,
 } from 'react-native-maps';
-import {navigate} from '../../../navigationRef';
+import {goBack, navigate} from '../../../navigationRef';
 import CuurentLocation from '../../Assets/Component/CuurentLocation';
 import MapViewDirections from 'react-native-maps-directions';
 import DatePicker from 'react-native-date-picker';
@@ -43,7 +44,7 @@ const Category = props => {
   const [description, setdescription] = useState('');
   const [loading, setLoading] = useContext(LoadContext);
   const [currentLocation, setcurrentLocation] = useContext(LocationContext);
-    const [locationadd, setlocationadd] = useContext(AddressContext);
+  const [locationadd, setlocationadd] = useContext(AddressContext);
   const [rendermap, setrendermap] = useState(false);
   useEffect(() => {
     getlocation();
@@ -94,31 +95,13 @@ const Category = props => {
   };
   console.log(location);
   console.log(shopdata.location);
-  const GOOGLE_MAPS_APIKEY='AIzaSyArRBhTMMM3MwDesDJpVEENPbdmS8gC8q0';
 
 const Mapcom=useCallback(()=>{
   return(<MapView
     ref={mapRef}
     provider={PROVIDER_GOOGLE} // remove if not using Google Maps
     style={styles.map}
-    //  initialRegion={{
-    //    latitude: 22.4692361,
-    //    longitude: 87.5619433,
-    //    latitudeDelta: 0.015,
-    //    longitudeDelta: 0.0121,
-    //  }}
-    // initialRegion={location}
-    // region={{latitude: shopdata?.location.coordinates[1],
-    //   longitude: shopdata?.location.coordinates[0],
-    //   latitudeDelta: 0.05,
-    //   longitudeDelta: 0.05}}
-    // region={location}
-    region={{
-      latitude: 22.4692361,
-      longitude: 87.5619433,
-      latitudeDelta: 0.05,
-      longitudeDelta: 0.05,
-    }}
+    region={location}
     showsUserLocation={true}
     >
     {/* {destination && ( */}
@@ -131,23 +114,6 @@ const Mapcom=useCallback(()=>{
           pinColor="green"
         // image={require('../../Assets/Images/Start.png')}
         />}
-    {/* <Marker
-      coordinate={{
-        latitude: 22.4692361,
-        longitude: 87.5619433,
-      }}
-      title={'Destination'}
-      pinColor="green"
-      // image={require('../../Assets/Images/Start.png')}
-    /> */}
-    {/* <Marker
-      coordinate={{
-        latitude: 22.4655801,
-        longitude: 87.5760952,
-      }}
-      title={'Sourse'}
-      pinColor={'red'}
-    /> */}
     {location?.latitude&&<Marker
           coordinate={{
             latitude: location?.latitude,
@@ -166,16 +132,7 @@ const Mapcom=useCallback(()=>{
         latitude: shopdata?.location?.coordinates[1],
         longitude: shopdata?.location?.coordinates[0],
       }}
-      // origin={{
-      //   latitude: 22.4655801,
-      //   longitude: 87.5760952,
-      // }}
-      // destination={{
-      //   latitude: 22.4692361,
-      //   longitude: 87.5619433,
-      // }}
       onReady={result => {
-        // console.log('result', result);
         const edgePadding = {
           top: 100,
           right: 50,
@@ -194,7 +151,7 @@ const Mapcom=useCallback(()=>{
       }}
       apikey={Googlekey}
       strokeWidth={3}
-      strokeColor={Constants.custom_blue}
+      strokeColor={Constants.custom_yellow}
       optimizeWaypoints={true}
     />
      )} 
@@ -203,15 +160,17 @@ const Mapcom=useCallback(()=>{
 
   return (
     <View style={styles.container}>
-      <View style={styles.headcov}>
-        <Header />
-      </View>
-      <View style={{height:400}}>
-      <Mapcom />
+      <View style={{height:'35%'}}>
+      {location?.latitude&&<Mapcom />}
+      <TouchableOpacity
+          style={styles.baccover}
+          onPress={() => goBack()}>
+          <BackIcon height={20} width={20}/>
+        </TouchableOpacity>
       </View>
       <KeyboardAvoidingView 
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                     style={{flex:1,paddingTop:10}}>
+                     style={{flex:1}}>
       <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
         <Text style={styles.maintxt}>Order category</Text>
         <TouchableOpacity style={[styles.inputbox, styles.shadowProp]}>
@@ -325,9 +284,21 @@ const styles = StyleSheet.create({
     backgroundColor: Constants.custom_black,
   },
   map: {
-    // flex: 1,
-    height:400
+    flex: 1,
+    // height:400
   },
+  baccover:{
+            position: 'absolute',
+            top: 20,
+            left: 20,
+            borderRadius: 30,
+            backgroundColor:Constants.white,
+            height:35,
+            width:35,
+            justifyContent:'center',
+            alignItems:'center',
+            boxShadow: '0px 2px 5px 0.08px grey',
+          },
   inputbox: {
     backgroundColor: '#cdcdcd',
     borderRadius: 15,
@@ -391,7 +362,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
-    marginBottom: 20,
+    marginBottom: 50,
     borderRadius: 10,
     width: '90%',
     alignSelf: 'center',

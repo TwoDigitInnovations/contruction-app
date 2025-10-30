@@ -195,7 +195,7 @@ const SignUp = props => {
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                     style={{flex:1}}
                   >
-      <ScrollView style={styles.btmpart} keyboardShouldPersistTaps={'handled'}>
+      <ScrollView style={styles.btmpart} showsVerticalScrollIndicator={false}>
         <View style={[styles.btnCov, styles.shadowProp]}>
           <TouchableOpacity
             style={[user === 0 ? styles.selectBtn : styles.unselectBtn]}

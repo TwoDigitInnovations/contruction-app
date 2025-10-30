@@ -75,6 +75,7 @@ const Orders = () => {
         style={styles.imgbg}>
         <FlatList
           data={orderlist}
+          showsVerticalScrollIndicator={false}
           renderItem={({item},i) => (
             <TouchableOpacity
               style={[styles.inputbox, styles.shadowProp,{marginBottom:dumydata.length ==i+1?150:10}]}
@@ -112,7 +113,7 @@ const Orders = () => {
                 style={{
                   color: Constants.black,
                   fontSize: 20,
-                  fontFamily: FONTS.dmsansedium,
+                  fontFamily: FONTS.Medium,
                 }}>
                 No Orders
               </Text>

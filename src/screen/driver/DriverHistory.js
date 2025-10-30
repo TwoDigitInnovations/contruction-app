@@ -1,4 +1,5 @@
 import {
+  Dimensions,
     FlatList,
     Image,
     Modal,
@@ -85,6 +86,23 @@ import Header from '../../Assets/Component/Header';
               </View>
               
             </TouchableOpacity>
+          )}
+          ListEmptyComponent={() => (
+            <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: Dimensions.get('window').height - 200,
+              }}>
+              <Text
+                style={{
+                  color: Constants.white,
+                  fontSize: 20,
+                  fontFamily: FONTS.SemiBold,
+                }}>
+                No Orders available
+              </Text>
+            </View>
           )}
         />
         </View>

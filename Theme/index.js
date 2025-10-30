@@ -31,3 +31,4 @@ export {default as CheckboxIcon} from '../src/Assets/Icon/checkbox.svg';
 export {default as CheckboxactiveIcon} from '../src/Assets/Icon/checkboxactive.svg';
 export { default as UploadIcon } from '../src/Assets/Icon/upload.svg';
 export { default as ProfileIcon } from '../src/Assets/Icon/profile.svg';
+export { default as PlusIcon } from '../src/Assets/Icon/plus.svg';

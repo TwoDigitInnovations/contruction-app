@@ -26,6 +26,7 @@ import { PERMISSIONS } from 'react-native-permissions';
 import Geolocation from 'react-native-geolocation-service';
 import { Down } from '../../../Theme';
 import MapViewDirections from 'react-native-maps-directions';
+import { mapStyle } from '../../Assets/Helpers/MapStyle';
 
 const Stores = (props) => {
   const mapRef = useRef(null);
@@ -34,6 +35,7 @@ const Stores = (props) => {
     const [toast, setToast] = useContext(ToastContext);
     const [loading, setLoading] = useContext(LoadContext);
       const [selectshop, setselectshop] = useState();
+      const [selectshopname, setselectshopname] = useState();
       const [location, setlocation] = useState(null);
   useEffect(()=>{
     nearbylocation();
@@ -70,8 +72,8 @@ const Stores = (props) => {
               setlocation({
                 latitude: position.coords.latitude,
                 longitude: position.coords.longitude,
-                latitudeDelta: 0.05,
-                longitudeDelta: 0.05,
+                latitudeDelta: 0.15,
+                longitudeDelta: 0.15,
               });
             },
             error => {
@@ -113,7 +115,7 @@ const Stores = (props) => {
         async res => {
           setLoading(false);
           console.log('$%#@^&**', res);
-          setshops(res?.data?.rides);
+          setshops(res?.data);
         },
         err => {
           setLoading(false);
@@ -123,55 +125,41 @@ const Stores = (props) => {
     });
   };
 
-  const PackageIcon = (item, index) => {
-    // console.log('image=======>', item);
+  // const PackageIcon = () => {
+  //   return (
+  //     <TouchableOpacity
+  //       style={{height: 45, width: 40, position: 'relative'}}
+  //       >
+  //       <View style={[styles.startMarkerView, ]}>
+  //         <View
+  //           style={[
+  //             styles.startMarkerView,
+  //             {overflow: 'hidden', borderColor: Constants.red},
+  //           ]}>
+  //           <Image
+  //             source={require('../../Assets/Images/shop.png')}
+  //             defaultSource={require('../../Assets/Images/shop.png')}
+  //             style={{height: 40, width: 30,resizeMode:'center' }}
+  //           />
+  //         </View>
+  //         {/* <View
+  //           style={{
+  //             position: 'absolute',
+  //             bottom: -28,
+  //           }}>
+  //           <Down height={50} width={20} color={Constants.black} />
+  //         </View> */}
+  //       </View>
+  //     </TouchableOpacity>
+  //   );
+  // };
+const PackageIcon = () => {
     return (
-      <TouchableOpacity
-        style={{height: 45, width: 40, position: 'relative'}}
-        onPress={() => {
-          // console.log('click')
-          // selectshop(item)
-        }}>
-        <View style={[styles.startMarkerView, ]}>
-          <View
-            style={[
-              styles.startMarkerView,
-              {overflow: 'hidden', borderColor: Constants.red},
-            ]}>
-            <Image
-              source={require('../../Assets/Images/shop2.png')}
-              // source={
-              //   item?.user?.img
-              //     ? {
-              //         uri: `${item.user.img}`,
-              //       }
-              //     : require('../../Assets/Images/shop2.png')
-              // }
-              onLoadEnd={() => {
-                // item.isReady = true;
-                // setPackagePlans([...packagePlans])
-                // if (index + 1 === packagePlans.length) {
-                //   setTimeout(() => {
-                //     setIsmapready(true)
-                //   }, 5000);
-                // }
-              }}
-              defaultSource={require('../../Assets/Images/shop2.png')}
-              style={{height: 40, width: 30,resizeMode:'center' }}
-            />
-          </View>
-          {/* <View
-            style={{
-              position: 'absolute',
-              bottom: -28,
-            }}>
-            <Down height={50} width={20} color={Constants.black} />
-          </View> */}
-        </View>
-      </TouchableOpacity>
+      <View style={{ height: 50, width: 50,alignItems: "center", justifyContent: "center" }}>
+        <Image source={require("../../Assets/Images/shop.png")} style={{height:'100%',width:'100%',}} resizeMode='contain'/>
+      </View>
     );
   };
-
   const [routeCoordinates, setRouteCoordinates] = useState([]);
   const animatedValue = new Animated.Value(0);
  useEffect(() => {
@@ -191,17 +179,11 @@ const Stores = (props) => {
   return (
     <View style={styles.container}>
       <View style={{height: '70%'}}>
-        <MapView
+        {location?.latitude&&<MapView
           ref={mapRef}
           provider={PROVIDER_GOOGLE} // remove if not using Google Maps
           style={styles.map}
-          //  initialRegion={{
-          //    latitude: 37.78825,
-          //    longitude: -122.4324,
-          //    latitudeDelta: 0.015,
-          //    longitudeDelta: 0.0121,
-          //  }}
-          // initialRegion={location}
+          customMapStyle={mapStyle}
             region={location}
             // region={{
             //      latitude: 22.469336569603133,
@@ -211,94 +193,6 @@ const Stores = (props) => {
             //    }
             //   }
           showsUserLocation={true}>
-          {/* {destination && ( */}
-          {/* <Marker
-              coordinate={{
-                latitude: data.dest.coordinates[1],
-                longitude: data.dest.coordinates[0],
-              }}
-              title={'Destination'}
-              pinColor="green"
-            // image={require('../../Assets/Images/Start.png')}
-            /> */}
-          {/* <Marker
-              coordinate={{
-                latitude: data.src.coordinates[1],
-                longitude: data.src.coordinates[0],
-              }}
-              title={'Sourse'}
-              pinColor={destination ? 'green' : '#de2c1f'}
-            /> */}
-          {/* {location && destination && ( */}
-          {/* <MapViewDirections
-              origin={{
-                latitude: data.src.coordinates[1],
-                longitude: data.src.coordinates[0],
-              }}
-              destination={{
-                latitude: data.dest.coordinates[1],
-                longitude: data.dest.coordinates[0],
-              }}
-              onReady={result => {
-                const edgePadding = {
-                  top: 100,
-                  right: 50,
-                  bottom: 100,
-                  left: 50,
-                };
-                console.log('result', result);
-                mapRef.current.fitToCoordinates(result.coordinates, {
-                  edgePadding,
-                  animated: true,
-                });
-                setRouteCoordinates(result.coordinates);
-              }}
-              apikey={GOOGLE_MAPS_APIKEY}
-              strokeWidth={3}
-              strokeColor={Constants.customblue}
-              optimizeWaypoints={true}
-            /> */}
-          {/* )} */}
-          {/* <MapViewDirections
-          // origin={{
-          //   latitude: location.latitude,
-          //   longitude: location.longitude,
-          // }}
-          // destination={{
-          //   latitude: shopdata?.location.coordinates[1],
-          //   longitude: shopdata?.location.coordinates[0],
-          // }}
-          origin={{
-            latitude: 22.4655801,
-            longitude: 87.5760952,
-          }}
-          destination={{
-            latitude: 22.4692361,
-            longitude: 87.5619433,
-          }}
-          onReady={result => {
-            // console.log('result', result);
-            const edgePadding = {
-              top: 100,
-              right: 50,
-              bottom: 100,
-              left: 50,
-            };
-            console.log('result', result);
-            mapRef.current.fitToCoordinates(result.coordinates, {
-              edgePadding,
-              animated: true,
-            });
-            setRouteCoordinates(result.coordinates);
-          }}
-          onError={(errorMessage) => {
-            console.error('MapViewDirections Error: ', errorMessage);
-          }}
-          apikey={Googlekey}
-          strokeWidth={3}
-          strokeColor={Constants.custom_yellow}
-          optimizeWaypoints={true}
-        /> */}
           {shops&&shops.length>0&&shops.map((item, i) => (
             <Marker
               key={i}
@@ -309,44 +203,18 @@ const Stores = (props) => {
               onPress={() => {
                 // rideRef.current.show(), setridedata(item);
                 setselectshop(item._id)
+                setselectshopname(item.shop_name)
               }}
-              // onDragEnd={e => {
-              //   setlocation({
-              //     latitude: e.nativeEvent.coordinate.latitude,
-              //     longitude: e.nativeEvent.coordinate.longitude,
-              //     latitudeDelta: 0.05,
-              //     longitudeDelta: 0.05,
-              //     // locationadd: add,
-              //   });
-              //   GetCurrentAddressByLatLong({
-              //     lat: e.nativeEvent.coordinate.latitude,
-              //     long: e.nativeEvent.coordinate.longitude,
-              //   }).then((res: any) => {
-              //     console.log('res===>', res);
-              //     setlocationadd(res.results[0].formatted_address);
-              //   });
-              // }}
-              // coordinate={{
-              //   latitude: location?.latitude ? Number(location?.latitude) : 0,
-              //   longitude: location?.longitude ? Number(location?.longitude) : 0,
-              // }}
               coordinate={{
                 latitude: item.location.coordinates[1],
                 longitude: item.location.coordinates[0],
               }}
-              // coordinate={{
-              //   latitude: 37.78825,
-              //   longitude: -122.4324,
-              //   // latitudeDelta: 0.015,
-              //   // longitudeDelta: 0.0121,
-              // }}
-              // title={'Sourse'}
             >
-              <PackageIcon index={i} item={item} />
+              <PackageIcon />
             </Marker>
           ))}
 
-        </MapView>
+        </MapView>}
       </View>
       <ScrollView style={styles.btmpart}>
         <Image
@@ -354,10 +222,10 @@ const Stores = (props) => {
           style={styles.titleimg}
         />
         {/* <Text style={styles.stmtxt}>Store near me</Text> */}
-        <Text style={styles.txt}>Make a choice to purchase goods </Text>
+        {selectshopname?<Text style={styles.txt2}>Selected Shop : {selectshopname}</Text>:<Text style={styles.txt}>Make a choice to purchase goods </Text>}
         <TouchableOpacity
           style={[styles.button, styles.shadowProp,{backgroundColor:selectshop?Constants.custom_yellow:'#7d6f56'}]}
-          onPress={() => {selectshop&&data&&navigate('Productlist',{vendorid:selectshop,categotyid:data})}}>
+          onPress={() => {selectshop&&data&&navigate('ProductDetail',{vendorid:selectshop,categotyid:data})}}>
           <Text style={styles.buttontxt}>Next</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -412,6 +280,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: FONTS.Regular,
     textAlign: 'center',
+  },
+  txt2: {
+    color: Constants.white,
+    fontSize: 14,
+    fontFamily: FONTS.Medium,
+    textAlign:'center'
   },
   stmtxt: {
     color: Constants.white,

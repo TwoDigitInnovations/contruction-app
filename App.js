@@ -23,6 +23,7 @@ import Geolocation from 'react-native-geolocation-service';
 import GetCurrentAddressByLatLong from './src/Assets/Component/GetCurrentAddressByLatLong';
 import { GetApi, Post } from './src/Assets/Helpers/Service';
 import CuurentLocation from './src/Assets/Component/CuurentLocation';
+import Toast from 'react-native-toast-message';
 
 export const Context = React.createContext('');
 export const ToastContext = React.createContext('');
@@ -65,13 +66,13 @@ const App = () => {
     if (userDetail?._id) {
       setuser(userDetail);
       if (userDetail.type === 'DRIVER') {
-        if (userDetail.verified === 'VERIFIED') {
+        if (userDetail.vehicle_doc_no) {
           setInitial('Drivertab');
         } else {
           setInitial('DriverForm');
         }
       } else if (userDetail.type === 'VENDOR') {
-        if (userDetail.verified === 'VERIFIED') {
+        if (userDetail.tax_reg_no) {
           setInitial('Vendortab');
         } else {
           setInitial('VendorForm');
@@ -202,7 +203,20 @@ const App = () => {
       );
     });
   };
-
+useEffect(() => {
+    if (toast) {
+      Toast.show({
+        type: 'success',
+        text1: toast,
+        position: 'top',
+        visibilityTime: 2500,
+        autoHide: true,
+        onHide: () => {
+          setToast('');
+        },
+      });
+    }
+  }, [toast]);
   return (
     <Context.Provider value={[initial, setInitial]}>
       <ToastContext.Provider value={[toast, setToast]}>
@@ -214,13 +228,13 @@ const App = () => {
               <UserContext.Provider value={[user, setuser]}>
                 <SafeAreaView style={styles.container}>
                   <Spinner color={'#fff'} visible={loading} />
-                  <CustomToaster
+                  {/* <CustomToaster
                     color={Constants.white}
                     backgroundColor={Constants.custom_yellow}
                     timeout={4000}
                     toast={toast}
                     setToast={setToast}
-                  />
+                  /> */}
                   {/* <Text>Hello</Text> */}
                   <StatusBar
                     barStyle="light-content"
@@ -228,6 +242,7 @@ const App = () => {
                   />
                   {initial !== '' && <Navigation initial={initial} />}
                   {/* <Navigation /> */}
+                  <Toast />
                 </SafeAreaView>
               </UserContext.Provider>
             </AddressContext.Provider>

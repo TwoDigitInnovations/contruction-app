@@ -463,7 +463,7 @@ const styles = StyleSheet.create({
     color: Constants.black,
     // fontWeight: 'bold',
     textAlign: 'center',
-    fontFamily: FONTS.dmsansedium,
+    fontFamily: FONTS.Medium,
     fontSize: 16,
     margin: 20,
     marginBottom: 10,
@@ -478,7 +478,7 @@ const styles = StyleSheet.create({
   alrt: {
     color: Constants.black,
     fontSize: 18,
-    fontFamily: FONTS.dmbold,
+    fontFamily: FONTS.Bold,
     // backgroundColor: 'red',
     width: '100%',
     textAlign: 'center',

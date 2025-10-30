@@ -36,6 +36,7 @@ const VendorProfile = () => {
   const [user, setuser] = useContext(UserContext);
   const [from, setFrom] = useState('');
   const [edit, setEdit] = useState(false);
+  const [status, setStatus] = useState();
   const [userDetail, setUserDetail] = useState({
     username: '',
     shop_name: '',
@@ -108,6 +109,7 @@ const VendorProfile = () => {
           phone: res?.data?.phone ?? user?.phone ?? '',
           username: res?.data?.username ?? user?.username ?? '',
         });
+        setStatus(res?.data?.verified ? res?.data?.verified : 'Pending');
         setuser(res?.data)
       },
       err => {
@@ -146,6 +148,7 @@ const VendorProfile = () => {
     formData.append('username', userDetail.username);
     formData.append('phone', userDetail.phone);
     formData.append('address', userDetail.address);
+    formData.append('location', JSON.stringify(userDetail?.location));
     formData.append('country', userDetail.country);
     formData.append('shop_name', userDetail.shop_name);
     formData.append('tax_reg_no', userDetail.tax_reg_no);
@@ -204,12 +207,7 @@ const VendorProfile = () => {
           keyboardShouldPersistTaps="always"
         >
           <View
-            style={{
-              flexDirection: 'row',
-              gap: 20,
-              alignItems: 'center',
-              marginLeft: 20,
-            }}
+            style={styles.headercov}
           >
             <BackIcon
               height={25}
@@ -219,6 +217,12 @@ const VendorProfile = () => {
             />
             <Text style={styles.headtxt}>Profile</Text>
           </View>
+          <View style={{flexDirection: 'row', marginVertical: 10,marginLeft:20}}>
+                  <Text style={styles.statustxt}>Verification Status -</Text>
+                  <Text style={[styles.statustxt, {color: '#fab905', marginLeft: 3}]}>
+                    {status}
+                  </Text>
+                </View>
           <View style={styles.profilepart}>
             {edit && (
               <Pressable
@@ -505,6 +509,12 @@ const styles = StyleSheet.create({
     // paddingHorizontal: 20,
     paddingVertical: Platform.OS === 'ios' ? 10 : 20,
   },
+  headercov:{
+              flexDirection: 'row',
+              gap: 20,
+              alignItems: 'center',
+              marginLeft: 20,
+            },
   signInbtn: {
     height: 60,
     width: '90%',

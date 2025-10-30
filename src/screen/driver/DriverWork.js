@@ -13,7 +13,7 @@ import {
   import {navigate} from '../../../navigationRef';
   import Header from '../../Assets/Component/Header';
   import {DeleteIcon, StatusIcon, ThreedotIcon, ViewIcon} from '../../../Theme';
-import { LoadContext, ToastContext } from '../../../App';
+import { LoadContext, ToastContext, UserContext } from '../../../App';
 import CuurentLocation from '../../Assets/Component/CuurentLocation';
 import { GetApi, Post } from '../../Assets/Helpers/Service';
 import { useIsFocused } from '@react-navigation/native';
@@ -27,11 +27,12 @@ import moment from 'moment';
     const [orderid, setorderid] = useState('');
         const [toast, setToast] = useContext(ToastContext);
         const [loading, setLoading] = useContext(LoadContext);
+        const [user, setuser] = useContext(UserContext);
         const [currentTab, setCurrentTab] = useState('pending')
         const [orderlist,setorderlist]=useState([])
           const IsFocused = useIsFocused();
           useEffect(() => {
-            if (IsFocused) {
+            if (IsFocused&&user?.verified==='VERIFIED') {
               setorderlist([])
               nearbylocation();
               setCurrentTab('pending')
@@ -113,6 +114,7 @@ import moment from 'moment';
     return (
       <View style={styles.container}>
         <Header item={'Orders'} />
+        {user?.verified==='VERIFIED'?<View>
         <View style={{ flexDirection: 'row' }}>
         <TouchableOpacity
           style={{
@@ -242,8 +244,42 @@ import moment from 'moment';
               
             </View>}
           }
+          ListEmptyComponent={() => (
+            <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: Dimensions.get('window').height - 200,
+              }}>
+              <Text
+                style={{
+                  color: Constants.white,
+                  fontSize: 20,
+                  fontFamily: FONTS.SemiBold,
+                }}>
+                No Orders available
+              </Text>
+            </View>
+          )}
         />
         </View>
+        </View>:
+        <View
+                    style={{
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      height: Dimensions.get('window').height - 300,
+                    }}>
+                    <Image
+                      source={require('../../Assets/Images/waiting.png')}
+                      style={{alignSelf: 'center', height: 200, width: 200}}
+                    />
+                    <Text style={styles.empttxt}>You are not verified yet.</Text>
+        <Text style={styles.empttxt2}>
+          Please wait for the verification to complete. It may take 3–5 business days.
+        </Text>
+        
+                  </View>}
         <Modal
           animationType="none"
           transparent={true}
@@ -494,5 +530,19 @@ import moment from 'moment';
       borderBottomColor: Constants.customgrey2,
       paddingBottom: 20,
     },
+    empttxt: {
+    fontSize: 16,
+    color: Constants.white,
+    fontFamily: FONTS.Bold,
+    textAlign: 'center',
+  },
+  empttxt2: {
+    fontSize: 16,
+    color: Constants.customgrey2,
+    fontFamily: FONTS.Medium,
+    textAlign: 'center',
+    width: '80%',
+    alignSelf: 'center',
+  },
   });
   

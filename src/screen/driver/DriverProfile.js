@@ -36,6 +36,7 @@ const DriverProfile = () => {
   const [user, setuser] = useContext(UserContext);
   const [from, setFrom] = useState('');
   const [edit, setEdit] = useState(false);
+  const [status, setStatus] = useState();
   const [userDetail, setUserDetail] = useState({
     username: '',
     address: '',
@@ -107,6 +108,7 @@ const DriverProfile = () => {
           phone: res?.data?.phone ?? user?.phone ?? '',
           username: res?.data?.username ?? user?.username ?? '',
         });
+        setStatus(res?.data?.verified ? res?.data?.verified : 'Pending');
         setuser(res?.data)
       },
       err => {
@@ -143,6 +145,7 @@ const DriverProfile = () => {
     formData.append('username', userDetail.username);
     formData.append('phone', userDetail.phone);
     formData.append('address', userDetail.address);
+    formData.append('location', JSON.stringify(userDetail?.location));
     formData.append('country', userDetail.country);
     formData.append('driving_licence_no', userDetail.driving_licence_no);
     formData.append('vehicle_doc_no', userDetail.vehicle_doc_no);
@@ -215,6 +218,12 @@ const DriverProfile = () => {
             />
             <Text style={styles.headtxt}>Profile</Text>
           </View>
+          <View style={{flexDirection: 'row', marginVertical: 10,marginLeft:20}}>
+                            <Text style={styles.statustxt}>Verification Status -</Text>
+                            <Text style={[styles.statustxt, {color: '#fab905', marginLeft: 3}]}>
+                              {status}
+                            </Text>
+                          </View>
           <View style={styles.profilepart}>
             {edit && (
               <Pressable

@@ -1,34 +1,58 @@
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Constants, { FONTS } from '../../Assets/Helpers/constant'
 import Header from '../../Assets/Component/Header'
 import { ApprovedIcon, DownarrIcon, PendingIcon, TotalorderIcon } from '../../../Theme'
-import { navigate } from '../../../navigationRef'
+import { goBack, navigate } from '../../../navigationRef'
+import { LoadContext } from '../../../App'
+import { GetApi } from '../../Assets/Helpers/Service'
 
 const Dashboard = () => {
+  const [loading, setLoading] = useContext(LoadContext);
+  const [orderdata, setorderdata] = useState();
+
+  useEffect(() => {
+    getordercounts();
+  }, []);
+  const getordercounts = () => {
+    setLoading(true);
+    GetApi('getordercount', {}).then(
+      async res => {
+        setLoading(false);
+        console.log(res);
+        if (res.status) {
+          setorderdata(res.data);
+        }
+      },
+      err => {
+        setLoading(false);
+        console.log(err);
+      },
+    );
+  };
   return (
     <View style={styles.container}>
         <Header item={'Dashboard'}/>
         <ImageBackground source={require('../../Assets/Images/concretebg.png')} style={styles.imgbg}>
-        <TouchableOpacity style={[styles.inputbox, styles.shadowProp]} onPress={()=>navigate('Stores')}>
+        <View style={[styles.inputbox, styles.shadowProp]} >
           <View style={[styles.inrshabox, styles.shadowProp2]}>
             <TotalorderIcon height={30} width={30}/>
-            <Text style={styles.txt}>Total Order  5</Text>
+            <Text style={styles.txt}>Total Order  {orderdata?.totalOrderCount}</Text>
           </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.inputbox, styles.shadowProp]} onPress={()=>navigate('Stores')}>
+        </View>
+        <View style={[styles.inputbox, styles.shadowProp]} >
           <View style={[styles.inrshabox, styles.shadowProp2]}>
             <ApprovedIcon height={30} width={30}/>
-            <Text style={styles.txt}>Order approved  11</Text>
+            <Text style={styles.txt}>Order delivered  {orderdata?.totalDeliveredOrder}</Text>
           </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.inputbox, styles.shadowProp]} onPress={()=>navigate('Stores')}>
+        </View>
+        <View style={[styles.inputbox, styles.shadowProp]} >
           <View style={[styles.inrshabox, styles.shadowProp2]}>
             <PendingIcon height={30} width={30}/>
-            <Text style={styles.txt}>Order Pending  10</Text>
+            <Text style={styles.txt}>Order Pending    {orderdata?.totalPendingOrder}</Text>
           </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, styles.shadowProp]} onPress={()=>navigate('Category')}>
+        </View>
+        <TouchableOpacity style={[styles.button, styles.shadowProp]} onPress={()=>goBack()}>
           <Text style={styles.buttontxt}>Back</Text>
         </TouchableOpacity>
         </ImageBackground>

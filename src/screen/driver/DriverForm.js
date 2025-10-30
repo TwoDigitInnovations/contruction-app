@@ -40,8 +40,6 @@ const DriverForm = () => {
   const [user, setuser] = useContext(UserContext);
   const [status, setStatus] = useState();
   const [model, setmodel] = useState(false);
-  const [updateModel, setUpdateModel] = useState(false);
-  const [alreadyusedmodel, setalreadyusedmodel] = useState(false);
   const [from, setFrom] = useState('');
   const [userDetail, setUserDetail] = useState({
     username: '',
@@ -120,15 +118,10 @@ const DriverForm = () => {
           await AsyncStorage.setItem(
             'userDetail', JSON.stringify(newdata),
           );
-          setuser(res.data);
-          reset('Vendortab');
+          setuser(newdata);
+          reset('Drivertab');
         } else {
-          if (!alreadyusedmodel) {
-            setTimeout(()=>{
               setmodel(true);
-              setalreadyusedmodel(true);
-            },500)
-          }
           setStatus(res?.data?.verified ? res?.data?.verified : 'Pending');
           setUserDetail({
             ...res?.data,
@@ -174,6 +167,7 @@ const DriverForm = () => {
         formData.append('username', userDetail.username);
         formData.append('phone', userDetail.phone);
         formData.append('address', userDetail.address);
+        formData.append('location', JSON.stringify(userDetail?.location));
         formData.append('country', userDetail.country);
         formData.append('driving_licence_no', userDetail.driving_licence_no);
         formData.append('vehicle_doc_no', userDetail.vehicle_doc_no);
@@ -189,9 +183,12 @@ const DriverForm = () => {
         console.log(res);
 
         if (res.status) {
-          // setToast(res.data.message);
-          setUpdateModel(true)
-          getProfile();
+        const newdata=res.data
+          newdata.token=user.token
+          await AsyncStorage.setItem(
+            'userDetail', JSON.stringify(newdata),
+          );
+          reset('Drivertab');
         } else {
           setToast(res?.message)
         }
@@ -526,7 +523,7 @@ const DriverForm = () => {
           </View>
         </View>
       </Modal>
-      <Modal transparent={true} visible={updateModel} animationType="slide">
+      {/* <Modal transparent={true} visible={updateModel} animationType="slide">
                             <View
                               style={{
                                 justifyContent: 'center',
@@ -549,7 +546,7 @@ const DriverForm = () => {
                                 </View>
                               </View>
                             </View>
-                          </Modal>
+                          </Modal> */}
     </View>
   );
 };

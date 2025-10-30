@@ -7,6 +7,7 @@ import {
   ScrollView,
   Modal,
   ImageBackground,
+  Linking,
 } from 'react-native';
 import React, {createRef, useContext, useEffect, useState} from 'react';
 import Constants, {FONTS} from '../../Assets/Helpers/constant';
@@ -22,12 +23,33 @@ import {navigate, reset} from '../../../navigationRef';
 import Header from '../../Assets/Component/Header';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserContext } from '../../../App';
+import InAppBrowser from 'react-native-inappbrowser-reborn';
 
 const VendorAccount = props => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
   const [user, setuser] = useContext(UserContext);
-
+const InAppBrowserFunc=async(props)=>{
+    try {
+      if (await InAppBrowser.isAvailable()) {
+        await InAppBrowser.open(props, {
+          // Customization options
+          dismissButtonStyle: 'cancel',
+          preferredBarTintColor: Constants.custom_yellow,
+          preferredControlTintColor: 'white',
+          readerMode: false,
+          animated: true,
+          modalPresentationStyle: 'fullScreen',
+          modalTransitionStyle: 'coverVertical',
+          enableBarCollapsing: false,
+        });
+      } else {
+        Linking.openURL(props);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
   return (
     <View style={[styles.container]}>
       <Header item={'Profile Settings'} />
@@ -81,7 +103,7 @@ const VendorAccount = props => {
 
             <TouchableOpacity
               style={styles.proopt}
-              onPress={()=>navigate('Inquiry')}>
+              onPress={()=>InAppBrowserFunc('https://tawk.to/chat/68e8bb5a928294194e5fcd1d/1j76hnmv5')}>
               <View style={styles.protxt3}>
                 <View style={styles.iconcov}>
                   <HSIcon height={20} width={20} />
