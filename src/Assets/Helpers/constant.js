@@ -5,7 +5,8 @@ const prodUrl = 'https://api.bodmass.com/v1/api/';
 // const prodUrl = 'https://construction-backend-8wa6.onrender.com/v1/api/';
 
 let apiUrl = prodUrl;
-export const Googlekey ='AIzaSyDHd5FoyP2sDBo0vO2i0Zq7TIUZ_7GhBcI'
+export const Googlekey ='AIzaSyCZRRqCOMrm_njXnzhtBi1GlNgYbLWZQxM'
+export const Currency = 'KES';
 
 const Constants = {
   baseUrl: apiUrl,

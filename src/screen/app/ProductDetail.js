@@ -6,12 +6,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useContext, useEffect, useState} from 'react';
-import Constants, {FONTS} from '../../Assets/Helpers/constant';
+import React, { useContext, useEffect, useState } from 'react';
+import Constants, { Currency, FONTS } from '../../Assets/Helpers/constant';
 import Header from '../../Assets/Component/Header';
-import {navigate} from '../../../navigationRef';
-import {LoadContext, ToastContext} from '../../../App';
-import {GetApi, Post} from '../../Assets/Helpers/Service';
+import { navigate } from '../../../navigationRef';
+import { LoadContext, ProductContext, ToastContext } from '../../../App';
+import { GetApi, Post } from '../../Assets/Helpers/Service';
 import { CheckboxactiveIcon, CheckboxIcon } from '../../../Theme';
 
 const ProductDetail = props => {
@@ -19,6 +19,8 @@ const ProductDetail = props => {
   const categotyid = props.route.params.categotyid;
   const [toast, setToast] = useContext(ToastContext);
   const [loading, setLoading] = useContext(LoadContext);
+  const [selectedProductData, setselectedProductData] =
+    useContext(ProductContext);
   const [productdetail, setproductdetail] = useState([]);
   const [inputvalue, setinputvalue] = useState('');
   const [selectedAtribute, setselectedAtribute] = useState({});
@@ -38,8 +40,12 @@ const ProductDetail = props => {
       async res => {
         setLoading(false);
         console.log(res);
-        if (res.status&&res.data?.length>0) {
+        if (res.status && res.data?.length > 0) {
           setproductdetail(res.data[0]);
+          const firstWithValue = res?.data[0]?.attributes?.find(
+            it => it?.value,
+          );
+          if (firstWithValue) setselectedAtribute(firstWithValue);
         }
       },
       err => {
@@ -53,39 +59,110 @@ const ProductDetail = props => {
       <Header item={'Product Detail'} />
       <ImageBackground
         source={require('../../Assets/Images/concretebg.png')}
-        style={styles.imgbg}>
+        style={styles.imgbg}
+      >
         <Text style={styles.maintxt}>Select Mixed Design/Strength</Text>
-        <Text style={styles.attributename}>{productdetail.name}</Text>
-        {productdetail?.attributes&&productdetail?.attributes.length>0&&productdetail.attributes.map(
-          (item, index) =>
-            item.value && (
-              <View style={{}} key={index}>
-                <TouchableOpacity
-                  style={styles.selectatribute}
-                  onPress={()=>setselectedAtribute(item)}
+        <Text style={styles.attributename}>
+          {productdetail?.attributes?.length > 0
+            ? productdetail.name
+            : productdetail?.categoryname}
+        </Text>
+        {productdetail?.attributes &&
+          productdetail?.attributes?.length > 0 &&
+          productdetail.attributes.map(
+            (item, index) =>
+              item.value && (
+                <View style={{}} key={index}>
+                  <TouchableOpacity
+                    style={styles.selectatribute}
+                    onPress={() => setselectedAtribute(item)}
                   >
-                    {selectedAtribute?.name===item?.name?<CheckboxactiveIcon height={25} width={25} color={Constants.custom_yellow}/>:<CheckboxIcon height={25} width={25} color={Constants.custom_yellow}/>}
-                    <Text style={styles.txt}>{item.name}</Text>
-                </TouchableOpacity>
-              </View>
-            ),
-          )}
-          <View style={{flexDirection:'row',gap:15}}>
-                  <View
-                  style={[styles.inputbox, styles.shadowProp]}
-                  >
-                    <TextInput 
-                    style={[styles.inrshabox, styles.shadowProp2]}
-                    value={inputvalue}
-                    onChangeText={setinputvalue}
-                    />
-                </View>
-                    <Text>/{selectedAtribute?.unit}</Text>
+                    <View style={{ flexDirection: 'row', gap: 15 }}>
+                      {selectedAtribute?.name === item?.name ? (
+                        <CheckboxactiveIcon
+                          height={25}
+                          width={25}
+                          color={Constants.custom_yellow}
+                        />
+                      ) : (
+                        <CheckboxIcon
+                          height={25}
+                          width={25}
+                          color={Constants.custom_yellow}
+                        />
+                      )}
+                      <Text style={styles.txt}>{item.name}</Text>
                     </View>
+                    <Text style={styles.txt2}>
+                      {Currency} {item.price}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              ),
+          )}
+        {productdetail?.attributes?.length > 0 ? (
+          <View style={styles.inputcov}>
+            <View style={[styles.inputbox, styles.shadowProp]}>
+              <TextInput
+                style={[styles.inrshabox, styles.shadowProp2]}
+                value={inputvalue}
+                onChangeText={setinputvalue}
+              />
+            </View>
+            {selectedAtribute?.unit && (
+              <Text style={styles.txt3}> {selectedAtribute?.unit}</Text>
+            )}
+          </View>
+        ) : (
+          <View
+            style={[
+              styles.inputbox,
+              styles.shadowProp,
+              { marginTop: 40, width: '90%' },
+            ]}
+          >
+            <View style={[styles.inrshabox2, styles.shadowProp2]}>
+              <Text style={styles.txt4} numberOfLines={1}>
+                {productdetail?.name}
+              </Text>
+              <Text style={styles.txt5}>
+                {Currency} {productdetail?.price}
+              </Text>
+            </View>
+          </View>
+        )}
 
+        {Number(inputvalue) > Number(selectedAtribute?.value) && (
+          <Text style={styles.require}>
+            Available stock is less than your entered value. You can purchase up
+            to {selectedAtribute?.value} {selectedAtribute?.unit}.
+          </Text>
+        )}
         <TouchableOpacity
-          style={[styles.button, styles.shadowProp]}
-          onPress={() => navigate('Category',{shopdata:productdetail?.posted_by,price:productdetail?.price,productid:productdetail?._id,productname:productdetail?.name,posted_by:productdetail?.posted_by})}>
+          style={[
+            styles.button,
+            styles.shadowProp,
+            {
+              backgroundColor:
+                (inputvalue === '' || !selectedAtribute?.value) &&
+                productdetail?.attributes?.length > 0
+                  ? '#baa172'
+                  : Constants.custom_yellow,
+            },
+          ]}
+          disabled={
+            (inputvalue === '' || !selectedAtribute?.value) &&
+            productdetail?.attributes?.length > 0
+          }
+          onPress={() => {
+            setselectedProductData({
+              productid: productdetail?._id,
+              selectedAtribute,
+              inputvalue,
+            });
+            navigate('Category');
+          }}
+        >
           <Text style={styles.buttontxt}>Next</Text>
         </TouchableOpacity>
       </ImageBackground>
@@ -107,11 +184,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#cdcdcd',
     borderRadius: 15,
     marginVertical: 10,
-    width: '90%',
+    width: '80%',
     alignSelf: 'center',
     padding: 7,
     height: 60,
-    marginTop:30
+    // marginTop: 30,
   },
   shadowProp: {
     boxShadow: '0px 0px 8px 0.05px grey',
@@ -129,10 +206,41 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 15,
   },
+  inrshabox2: {
+    flex: 1,
+    borderRadius: 15,
+    backgroundColor: Constants.white,
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   txt: {
     fontSize: 16,
     color: Constants.white,
     fontFamily: FONTS.Medium,
+  },
+  txt3: {
+    fontSize: 18,
+    color: Constants.white,
+    fontFamily: FONTS.Medium,
+  },
+  txt2: {
+    fontSize: 16,
+    color: Constants.custom_yellow,
+    fontFamily: FONTS.Medium,
+  },
+  txt4: {
+    fontSize: 16,
+    color: Constants.black,
+    fontFamily: FONTS.SemiBold,
+    width: '78%',
+  },
+  txt5: {
+    fontSize: 16,
+    color: Constants.custom_yellow,
+    fontFamily: FONTS.SemiBold,
   },
   maintxt: {
     fontSize: 16,
@@ -160,18 +268,33 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: FONTS.SemiBold,
   },
-  attributename:{
-    color:Constants.white,
-    fontSize:16,
-    fontFamily:FONTS.Bold,
-    textAlign:'center',
-    textDecorationLine:'underline'
+  attributename: {
+    color: Constants.white,
+    fontSize: 18,
+    fontFamily: FONTS.Bold,
+    textAlign: 'center',
+    textDecorationLine: 'underline',
+    textTransform: 'capitalize',
   },
-  selectatribute:{
-    flexDirection:'row',
-    marginLeft:15,
-    gap:15,
-    alignItems:'center',
-    marginTop:15
+  selectatribute: {
+    flexDirection: 'row',
+    marginHorizontal: 15,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 15,
+  },
+  inputcov: {
+    flexDirection: 'row',
+    gap: 15,
+    marginHorizontal: 20,
+    alignItems: 'center',
+    marginTop: 30,
+  },
+  require: {
+    color: Constants.red,
+    fontFamily: FONTS.Medium,
+    marginHorizontal: 15,
+    fontSize: 14,
+    marginTop: 10,
   },
 });

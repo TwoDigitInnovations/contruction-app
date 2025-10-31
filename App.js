@@ -31,7 +31,8 @@ export const LoadContext = React.createContext('');
 export const LocationContext = React.createContext('');
 export const UserContext = React.createContext('');
 export const AddressContext = React.createContext('');
-// export const Context = React.createContext<any>('');
+export const ProductContext = React.createContext('');
+
 const App = () => {
   const [initial, setInitial] = useState('');
   const [toast, setToast] = useState('');
@@ -41,6 +42,7 @@ const App = () => {
   const [mycountry, setmycountry] = useState('');
   const [loading, setLoading] = useState(false);
   const [user, setuser] = useState({});
+  const [selectedProductData, setselectedProductData] = useState({});
   const [currentLocation, setcurrentLocation] = useState(null);
   const [locationadd, setlocationadd] = useState('');
   const APP_ID = '';
@@ -226,16 +228,9 @@ useEffect(() => {
           >
             <AddressContext.Provider value={[locationadd, setlocationadd]}>
               <UserContext.Provider value={[user, setuser]}>
+              <ProductContext.Provider value={[selectedProductData, setselectedProductData]}>
                 <SafeAreaView style={styles.container}>
                   <Spinner color={'#fff'} visible={loading} />
-                  {/* <CustomToaster
-                    color={Constants.white}
-                    backgroundColor={Constants.custom_yellow}
-                    timeout={4000}
-                    toast={toast}
-                    setToast={setToast}
-                  /> */}
-                  {/* <Text>Hello</Text> */}
                   <StatusBar
                     barStyle="light-content"
                     backgroundColor={'black'}
@@ -244,6 +239,7 @@ useEffect(() => {
                   {/* <Navigation /> */}
                   <Toast />
                 </SafeAreaView>
+                </ProductContext.Provider>
               </UserContext.Provider>
             </AddressContext.Provider>
           </LocationContext.Provider>

@@ -20,8 +20,8 @@ import Tracking from '../screen/app/Tracking';
 import { Vendortab } from './VenderTab';
 import VenderOrders from '../screen/vendor/VenderOrders';
 import { Drivertab } from './DriverTab';
-import Productlist from '../screen/app/Productlist';
 import ProductDetail from '../screen/app/ProductDetail';
+import CheckOut from '../screen/app/CheckOut';
 import OrderDetail from '../screen/vendor/OrderDetail';
 import Map from '../screen/driver/Map';
 import DriverOrder from '../screen/driver/DriverOrder';
@@ -75,7 +75,7 @@ export default function Navigation(props) {
         <Stack.Screen name="Inquiry" component={Inquiry} />
         <Stack.Screen name="Tracking" component={Tracking} />
         <Stack.Screen name="VenderOrders" component={VenderOrders} />
-        <Stack.Screen name="Productlist" component={Productlist} />
+        <Stack.Screen name="CheckOut" component={CheckOut} />
         <Stack.Screen name="ProductDetail" component={ProductDetail} />
         <Stack.Screen name="OrderDetail" component={OrderDetail} />
         <Stack.Screen name="Map" component={Map} />

@@ -28,58 +28,65 @@ import MapViewDirections from 'react-native-maps-directions';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import GetCurrentAddressByLatLong from '../../Assets/Component/GetCurrentAddressByLatLong';
-import { AddressContext, LoadContext, LocationContext } from '../../../App';
+import { AddressContext, LoadContext, LocationContext, ProductContext, UserContext } from '../../../App';
+import { GetApi } from '../../Assets/Helpers/Service';
 
 const Category = props => {
   const mapRef = useRef(null);
-  const shopdata = props?.route?.params.shopdata;
-  const productdata = props?.route?.params;
   const [routeCoordinates, setRouteCoordinates] = useState([]);
   const animatedValue = new Animated.Value(0);
-  const [location, setlocation] = useState();
   const [open, setOpen] = useState(false);
   const [sheddate, setsheddate] = useState(new Date());
-  const [locationaddlocal, setlocationaddlocal] = useState(null);
+  const [productdetail, setproductdetail] = useState();
   const [extradate, setextradate] = useState(null);
   const [description, setdescription] = useState('');
   const [loading, setLoading] = useContext(LoadContext);
   const [currentLocation, setcurrentLocation] = useContext(LocationContext);
   const [locationadd, setlocationadd] = useContext(AddressContext);
+  const [user, setuser] = useContext(UserContext);
+  const [selectedProductData, setselectedProductData] =
+      useContext(ProductContext);
   const [rendermap, setrendermap] = useState(false);
   useEffect(() => {
-    getlocation();
+    {selectedProductData?.productid&&getproductbyid()}
+    // {!user?.shipping_address?.address&&getlocation();}
   }, []);
-  useEffect(() => {
-    
-    // setTimeout(() => {
-      setrendermap(true)
-    // }, 200);
-  }, []);
-
-  const getlocation = () => {
-    CuurentLocation(res => {
-      setlocation({
-        latitude: res.coords.latitude,
-        longitude: res.coords.longitude,
-        latitudeDelta: 0.05,
-        longitudeDelta: 0.05,
-      });
-      setcurrentLocation({
-        latitude: res.coords.latitude,
-        longitude: res.coords.longitude,
-        latitudeDelta: 0.05,
-        longitudeDelta: 0.05,
-      });
-      GetCurrentAddressByLatLong({
-        lat: res.coords.latitude,
-        long: res.coords.longitude,
-      }).then(res => {
-        console.log('res===>', res);
-        setlocationaddlocal(res.results[0].formatted_address);
-        setlocationadd(res.results[0].formatted_address);
-      });
-    });
+  
+  const getproductbyid = () => {
+    setLoading(true);
+    GetApi(`getProductById/${selectedProductData?.productid}`).then(
+      async res => {
+        setLoading(false);
+        console.log(res);
+        if (res.status ) {
+          setproductdetail(res.data);
+          setrendermap(true)
+        }
+      },
+      err => {
+        setLoading(false);
+        console.log(err);
+      },
+    );
   };
+
+  // const getlocation = () => {
+  //   CuurentLocation(res => {
+  //     setcurrentLocation({
+  //       latitude: res.coords.latitude,
+  //       longitude: res.coords.longitude,
+  //       latitudeDelta: 0.05,
+  //       longitudeDelta: 0.05,
+  //     });
+  //     GetCurrentAddressByLatLong({
+  //       lat: res.coords.latitude,
+  //       long: res.coords.longitude,
+  //     }).then(res => {
+  //       console.log('res===>', res);
+  //       setlocationadd(res.results[0].formatted_address);
+  //     });
+  //   });
+  // };
   useEffect(() => {
     if (routeCoordinates.length > 0) {
       animateRoute();
@@ -93,44 +100,49 @@ const Category = props => {
       useNativeDriver: false,
     }).start();
   };
-  console.log(location);
-  console.log(shopdata.location);
 
 const Mapcom=useCallback(()=>{
   return(<MapView
     ref={mapRef}
     provider={PROVIDER_GOOGLE} // remove if not using Google Maps
     style={styles.map}
-    region={location}
+    region={
+      {
+              latitude: currentLocation?.latitude,
+              longitude: currentLocation?.longitude,
+              latitudeDelta: 0.015,
+              longitudeDelta: 0.0121,
+            }
+    }
     showsUserLocation={true}
     >
     {/* {destination && ( */}
-   {shopdata?.location?.coordinates&& <Marker
+   {productdetail?.posted_by?.location?.coordinates?.length>0&& <Marker
           coordinate={{
-            latitude: shopdata?.location.coordinates[1],
-            longitude: shopdata?.location.coordinates[0],
+            latitude: productdetail?.posted_by?.location.coordinates[1],
+            longitude: productdetail?.posted_by?.location.coordinates[0],
           }}
           title={'Destination'}
           pinColor="green"
         // image={require('../../Assets/Images/Start.png')}
         />}
-    {location?.latitude&&<Marker
+    {currentLocation?.latitude&&<Marker
           coordinate={{
-            latitude: location?.latitude,
-            longitude: location?.longitude,
+            latitude: currentLocation?.latitude,
+            longitude: currentLocation?.longitude,
           }}
           title={'Sourse'}
           pinColor={'red'}
         />}
-    {location && shopdata?.location?.coordinates&& (
+    {currentLocation && productdetail?.posted_by?.location?.coordinates?.length>0&& (
     <MapViewDirections
       origin={{
-        latitude: location?.latitude,
-        longitude: location?.longitude,
+        latitude: currentLocation?.latitude,
+        longitude: currentLocation?.longitude,
       }}
       destination={{
-        latitude: shopdata?.location?.coordinates[1],
-        longitude: shopdata?.location?.coordinates[0],
+        latitude: productdetail?.posted_by?.location?.coordinates[1],
+        longitude: productdetail?.posted_by?.location?.coordinates[0],
       }}
       onReady={result => {
         const edgePadding = {
@@ -156,12 +168,12 @@ const Mapcom=useCallback(()=>{
     />
      )} 
   </MapView>)
-},[rendermap,location])
+},[rendermap,currentLocation])
 
   return (
     <View style={styles.container}>
       <View style={{height:'35%'}}>
-      {location?.latitude&&<Mapcom />}
+      {currentLocation?.latitude&&<Mapcom />}
       <TouchableOpacity
           style={styles.baccover}
           onPress={() => goBack()}>
@@ -176,7 +188,7 @@ const Mapcom=useCallback(()=>{
         <TouchableOpacity style={[styles.inputbox, styles.shadowProp]}>
           <View style={[styles.inrshabox, styles.shadowProp2]}>
             <Text style={styles.txt} numberOfLines={2}>
-              {shopdata?.shop_address}
+              {productdetail?.posted_by?.address}
             </Text>
             <LocationIcon />
           </View>
@@ -184,7 +196,7 @@ const Mapcom=useCallback(()=>{
         <TouchableOpacity style={[styles.inputbox, styles.shadowProp]}>
           <View style={[styles.inrshabox, styles.shadowProp2]}>
             <Text style={styles.txt} numberOfLines={2}>
-              {locationaddlocal}
+              {locationadd}
             </Text>
             <LocationIcon />
           </View>
@@ -257,14 +269,10 @@ const Mapcom=useCallback(()=>{
           style={[styles.button, styles.shadowProp]}
           onPress={() =>
             navigate('Shipping', {
-              useradd: locationaddlocal,
+              useradd: locationadd,
               description: description,
               sheduledate: extradate,
-              location: location,
-              price: productdata.price,
-              productid: productdata.productid,
-              productname: productdata.productname,
-              posted_by: productdata.posted_by,
+              currentLocation: currentLocation,
             })
           }>
           <Text style={styles.buttontxt}>Next</Text>

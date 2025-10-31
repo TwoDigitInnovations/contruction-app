@@ -16,15 +16,12 @@ import {GetApi, Post} from '../../Assets/Helpers/Service';
 import LocationDropdown from '../../Assets/Component/LocationDropdown';
 import {AddressContext, LoadContext, LocationContext, ToastContext} from '../../../App';
 import {checkEmail} from '../../Assets/Helpers/InputsNullChecker';
-import {navigate} from '../../../navigationRef';
+import {goBack, navigate} from '../../../navigationRef';
 
 const Shipping = props => {
-  const productdata = props?.route?.params;
-  console.log(productdata);
   const [modalVisible, setModalVisible] = useState(false);
   const [currentLocation, setcurrentLocation] = useContext(LocationContext);
   const [locationadd, setlocationadd] = useContext(AddressContext);
-  const [location, setlocation] = useState(productdata?.location);
   const [toast, setToast] = useContext(ToastContext);
   const [loading, setLoading] = useContext(LoadContext);
   const [submitted, setSubmitted] = useState(false);
@@ -51,18 +48,10 @@ const Shipping = props => {
           console.log(res);
           if (res.status) {
             // setaddressdata(res.data);
-            setaddressdata({
-              username: res?.data?.username || '',
-              address: res?.data?.address || productdata?.useradd || '',
-              pincode: res?.data?.pincode || '',
-              phone: res?.data?.phone || '',
-              city: res?.data?.city || '',
-              country: res?.data?.country || '',
-              email: res?.data?.email || '',
-              state: res?.data?.state || '',
-              userid: res?.data?._id,
-            });
-            setlocation(productdata?.location)
+            setaddressdata({...res?.data?.shipping_address,location:res?.data?.shipping_address?.location??{
+        type: 'Point',
+        coordinates: [currentLocation?.longitude, currentLocation?.latitude]
+      },address:res?.data?.shipping_address?.address??locationadd})
           } else {
             // setToast(res.message);
           }
@@ -95,76 +84,14 @@ const Shipping = props => {
       return;
     }
 
-    // const userdata = {
-    //   ...addressdata,
-    //   userId: addressdata?._id,
-    // };
-
-    const data = {
-      ...addressdata,
-      price: productdata.price,
-      product: productdata.productid,
-      productname: productdata.productname,
-      vendor:productdata.posted_by
-    };
-    if (location?.latitude && location?.longitude) {
-      data.location = {
-        type: 'Point',
-        coordinates: [location.longitude, location.latitude],
-      };
-    }
-    if (addressdata?.userid) {
-      data.user = addressdata.userid;
-    }
-    if (productdata.description) {
-      data.description = productdata.description;
-    }
-    if (productdata.sheduledate) {
-      data.sheduledate = productdata.sheduledate;
-    }
-    // data.total = sumdata;
-
-    // console.log('addressdata', addressdata);
-    console.log('data', data);
-
-    Post('createOrder', data, {}).then(
+    Post('updateProfile', {shipping_address:addressdata}).then(
       async res => {
         setLoading(false);
         console.log(res);
         if (res?.status) {
-          setModalVisible(true);
           setSubmitted(false);
-          setaddressdata({
-            username: '',
-            address: '',
-            pincode: '',
-            phone: '',
-            city: '',
-            country: '',
-            email: '',
-            state: '',
-          });
+          goBack()
         }
-        // {
-        //   addressdata?._id &&
-        //     (setLoading(true),
-        //     Post('updateprofile', userdata, {}).then(
-        //       async res => {
-        //         setLoading(false);
-        //         console.log(res);
-
-        //         if (res.status) {
-        //           // navigate('App');
-        //         } else {
-        //           setToast(res?.message);
-        //         }
-        //       },
-        //       err => {
-        //         setLoading(false);
-        //         console.log(err);
-        //       },
-        //     ));
-        // }
       },
       err => {
         setLoading(false);
@@ -176,11 +103,10 @@ const Shipping = props => {
     console.log('lat=======>', lat);
     console.log('add=======>', add);
     // setlocationadd(add);
-    setaddressdata({...addressdata, address: add});
-    setlocation({
-      latitude: lat.lat,
-      longitude: lat.lng,
-    });
+    setaddressdata({...addressdata, address: add,location:{
+        type: 'Point',
+        coordinates: [lat.lng, lat.lat],
+      }});
   };
   return (
     <View style={styles.container}>

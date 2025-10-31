@@ -53,7 +53,7 @@ const Project = () => {
 
         <View style={styles.toppart}>
               <View style={styles.mainpart}>
-                <View style={{ flexDirection: 'row',alignItems:'center', gap: 15, height: '100%' }}>
+                <View style={styles.headcov}>
                   <BackIcon color={Constants.black} style={styles.aliself} onPress={()=>goBack()}/>
                     <TouchableOpacity style={styles.addtxt} onPress={()=>navigate('Shipping')}>
                   <Text style={styles.backtxt} numberOfLines={1}>{user?.address?user?.address:locationadd}</Text>
@@ -174,6 +174,12 @@ const styles = StyleSheet.create({
   },
   bgimg: {
     height: 240,
+  },
+  headcov:{ 
+    flexDirection: 'row',
+    alignItems:'center', 
+    gap: 15, 
+    height: '100%', 
   },
   inputbox2: {
     backgroundColor: Constants.custom_black,
