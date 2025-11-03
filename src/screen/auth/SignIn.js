@@ -60,7 +60,7 @@ const SignIn = props => {
           setuser(res?.data)
           setToast('Login Successfully');
           if (res.data.type === 'DRIVER') {
-            if (res?.data?.verified==='VERIFIED') {
+            if (res?.data?.vehicle_doc_no) {
             reset('Drivertab');
           } else{
             reset('DriverForm');

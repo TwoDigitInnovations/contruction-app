@@ -26,7 +26,7 @@ import {
   requestLocationAccuracy,
 } from 'react-native-permissions';
 import MapViewDirections from 'react-native-maps-directions';
-import Constants, {FONTS, Googlekey} from '../../Assets/Helpers/constant';
+import Constants, {Currency, FONTS, Googlekey} from '../../Assets/Helpers/constant';
 import moment from 'moment';
 import {goBack, navigate} from '../../../navigationRef';
 import {LoadContext, ToastContext} from '../../../App';
@@ -323,7 +323,7 @@ const Map = props => {
                 </Text>
               </View>
             </View>
-            <Text style={styles.amount}>₹{orderdetail?.price}</Text>
+            <Text style={styles.amount}>{Currency} {orderdetail?.price}</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.box2, styles.shadowProp]}>
@@ -360,7 +360,7 @@ const Map = props => {
                           12
                         </Text>
                       </View> */}
-              <Text style={styles.amount}>₹{orderdetail?.product?.price}</Text>
+              <Text style={styles.amount}>{Currency} {orderdetail?.product?.price}</Text>
             </View>
           </View>
         </TouchableOpacity>

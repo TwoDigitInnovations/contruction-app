@@ -106,6 +106,7 @@ const ProductDetail = props => {
               <TextInput
                 style={[styles.inrshabox, styles.shadowProp2]}
                 value={inputvalue}
+                keyboardType='number-pad'
                 onChangeText={setinputvalue}
               />
             </View>

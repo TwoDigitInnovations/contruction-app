@@ -9,6 +9,7 @@ import ForgotPassword from '../screen/auth/ForgotPassword';
 import Project from '../screen/app/Project';
 import { TabNav } from './TabScreen';
 import Stores from '../screen/app/Stores';
+import StoreWiseProduct from '../screen/app/StoreWiseProduct';
 import Concrete from '../screen/app/Concrete';
 import Category from '../screen/app/Category';
 import Shipping from '../screen/app/Shipping';
@@ -66,6 +67,7 @@ export default function Navigation(props) {
         <Stack.Screen name="Drivertab" component={Drivertab} />
         <Stack.Screen name="Project" component={Project} />
         <Stack.Screen name="Stores" component={Stores} />
+        <Stack.Screen name="StoreWiseProduct" component={StoreWiseProduct} />
         <Stack.Screen name="Concrete" component={Concrete} />
         <Stack.Screen name="Category" component={Category} />
         <Stack.Screen name="Shipping" component={Shipping} />

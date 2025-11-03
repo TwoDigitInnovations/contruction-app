@@ -8,6 +8,7 @@ export { default as RightarrowIcon } from '../src/Assets/Icon/rightarrow.svg';
 export { default as TruckIcon } from '../src/Assets/Icon/truck.svg';
 export { default as DownarrIcon } from '../src/Assets/Icon/downarr.svg';
 export { default as LocationIcon } from '../src/Assets/Icon/location.svg';
+export { default as LocationEditIcon } from '../src/Assets/Icon/locationedit.svg';
 export { default as TotalorderIcon } from '../src/Assets/Icon/totalorder.svg';
 export { default as PendingIcon } from '../src/Assets/Icon/pending.svg';
 export { default as ApprovedIcon } from '../src/Assets/Icon/approved.svg';
@@ -32,3 +33,4 @@ export {default as CheckboxactiveIcon} from '../src/Assets/Icon/checkboxactive.s
 export { default as UploadIcon } from '../src/Assets/Icon/upload.svg';
 export { default as ProfileIcon } from '../src/Assets/Icon/profile.svg';
 export { default as PlusIcon } from '../src/Assets/Icon/plus.svg';
+export { default as DeliveryIcon } from '../src/Assets/Icon/delivery.svg';

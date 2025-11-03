@@ -20,7 +20,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import Constants, { FONTS } from '../../Assets/Helpers/constant';
+import Constants, { Currency, FONTS } from '../../Assets/Helpers/constant';
 import Header from '../../Assets/Component/Header';
 import CameraGalleryPeacker from '../../Assets/Component/CameraGalleryPeacker';
 import { LoadContext, ToastContext, UserContext } from '../../../App';
@@ -233,9 +233,9 @@ const Products = () => {
               style={{ flex: 1, paddingHorizontal: 20, marginBottom: 20 }}
             >
               <ScrollView showsVerticalScrollIndicator={false}>
-                <View
+                <TouchableOpacity
                   style={{ marginTop: 20 }}
-                  // onPress={() => setShowDrop(true)}
+                  onPress={() =>  dropdownRef.current?.open()}
                 >
                   {/* <Text style={styles.add}>
                     {selectedcat?.name ? selectedcat?.name : 'Select Category'}
@@ -267,7 +267,7 @@ const Products = () => {
                   <View style={[styles.mylivejobtitle]}>
                     <Text style={styles.jobtitle}>Category</Text>
                   </View>
-                </View>
+                </TouchableOpacity>
                 {submitted && !selectedcat?.name && (
                   <Text style={styles.require}>Category is required</Text>
                 )}
@@ -602,7 +602,7 @@ const Products = () => {
                                   <Text
                                     style={[styles.amount, { marginLeft: 10 }]}
                                   >
-                                    ₹{attr?.price || '0'}
+                                    {Currency} {attr?.price || '0'}
                                   </Text>
                                 </View>
                               ))
@@ -619,7 +619,7 @@ const Products = () => {
                     ) : (
                       <View style={styles.txtcol}>
                         <Text style={[styles.secendboldtxt,{fontFamily: FONTS.SemiBold}]}>Price : </Text>
-                        <Text style={styles.amount}>₹{item?.price}</Text>
+                        <Text style={styles.amount}>{Currency} {item?.price}</Text>
                       </View>
                     )}
                   </View>
@@ -878,7 +878,7 @@ const styles = StyleSheet.create({
   },
   amount: {
     color: Constants.custom_yellow,
-    fontSize: 24,
+    fontSize: 18,
     fontFamily: FONTS.Bold,
   },
   productbtn: {

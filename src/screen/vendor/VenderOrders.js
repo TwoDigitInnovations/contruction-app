@@ -6,7 +6,7 @@ import {
   View,
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
-import Constants, {FONTS} from '../../Assets/Helpers/constant';
+import Constants, {Currency, FONTS} from '../../Assets/Helpers/constant';
 import {navigate} from '../../../navigationRef';
 import Header from '../../Assets/Component/Header';
 import {ThreedotIcon, TickboxIcon, TickIcon} from '../../../Theme';
@@ -103,7 +103,7 @@ const VenderOrders = props => {
               ) : (
                 <Text></Text>
               )}
-              <Text style={styles.amount}>₹{orderdata?.price}</Text>
+              <Text style={styles.amount}>{Currency} {orderdata?.price}</Text>
             </View>
           </View>
         </View>
@@ -144,7 +144,7 @@ const VenderOrders = props => {
                 </Text>
               </View>
             </View>
-            <Text style={styles.amount}>₹{orderdata?.price}</Text>
+            <Text style={styles.amount}>{Currency} {orderdata?.price}</Text>
           </View>
         </View>
       )}
@@ -181,7 +181,7 @@ const VenderOrders = props => {
                 12
               </Text>
             </View> */}
-            <Text style={styles.amount}>₹{orderdata?.product?.price}</Text>
+            <Text style={styles.amount}>{Currency} {orderdata?.product?.price}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
   },
   amount: {
     color: Constants.custom_yellow,
-    fontSize: 24,
+    fontSize: 18,
     fontFamily: FONTS.Bold,
     alignSelf: 'flex-end',
   },

@@ -12,24 +12,37 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
-import Constants, {FONTS, Googlekey} from '../../Assets/Helpers/constant';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import Constants, { FONTS, Googlekey } from '../../Assets/Helpers/constant';
 import Header from '../../Assets/Component/Header';
-import {BackIcon, LocationIcon} from '../../../Theme';
+import { BackIcon, LocationEditIcon, LocationIcon } from '../../../Theme';
 import MapView, {
   Marker,
   Polygon,
   Polyline,
   PROVIDER_GOOGLE,
 } from 'react-native-maps';
-import {goBack, navigate} from '../../../navigationRef';
+import { goBack, navigate } from '../../../navigationRef';
 import CuurentLocation from '../../Assets/Component/CuurentLocation';
 import MapViewDirections from 'react-native-maps-directions';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import GetCurrentAddressByLatLong from '../../Assets/Component/GetCurrentAddressByLatLong';
-import { AddressContext, LoadContext, LocationContext, ProductContext, UserContext } from '../../../App';
+import {
+  AddressContext,
+  LoadContext,
+  LocationContext,
+  ProductContext,
+  UserContext,
+} from '../../../App';
 import { GetApi } from '../../Assets/Helpers/Service';
+import { useIsFocused } from '@react-navigation/native';
 
 const Category = props => {
   const mapRef = useRef(null);
@@ -42,25 +55,48 @@ const Category = props => {
   const [description, setdescription] = useState('');
   const [loading, setLoading] = useContext(LoadContext);
   const [currentLocation, setcurrentLocation] = useContext(LocationContext);
+  const [usedLocation, setUsedLocation] = useState();
+  const [usedAddress, setUsedAddress] = useState();
   const [locationadd, setlocationadd] = useContext(AddressContext);
   const [user, setuser] = useContext(UserContext);
   const [selectedProductData, setselectedProductData] =
-      useContext(ProductContext);
+    useContext(ProductContext);
   const [rendermap, setrendermap] = useState(false);
+  const IsFocused = useIsFocused();
   useEffect(() => {
-    {selectedProductData?.productid&&getproductbyid()}
-    // {!user?.shipping_address?.address&&getlocation();}
+    {
+      selectedProductData?.productid && getproductbyid();
+    }
   }, []);
-  
+  useEffect(() => {
+    if (IsFocused) {
+      setUsedLocation({
+        latitude:
+          user?.shipping_address?.location?.coordinates?.length > 0
+            ? user?.shipping_address?.location?.coordinates[1]
+            : currentLocation?.latitude,
+        longitude:
+          user?.shipping_address?.location?.coordinates?.length > 0
+            ? user?.shipping_address?.location?.coordinates[0]
+            : currentLocation?.longitude,
+      });
+      setUsedAddress(
+        user?.shipping_address?.address
+          ? user?.shipping_address?.address
+          : locationadd,
+      );
+    }
+  }, [IsFocused]);
+  console.log('usedlocation', usedLocation);
   const getproductbyid = () => {
     setLoading(true);
     GetApi(`getProductById/${selectedProductData?.productid}`).then(
       async res => {
         setLoading(false);
         console.log(res);
-        if (res.status ) {
+        if (res.status) {
           setproductdetail(res.data);
-          setrendermap(true)
+          setrendermap(true);
         }
       },
       err => {
@@ -70,23 +106,6 @@ const Category = props => {
     );
   };
 
-  // const getlocation = () => {
-  //   CuurentLocation(res => {
-  //     setcurrentLocation({
-  //       latitude: res.coords.latitude,
-  //       longitude: res.coords.longitude,
-  //       latitudeDelta: 0.05,
-  //       longitudeDelta: 0.05,
-  //     });
-  //     GetCurrentAddressByLatLong({
-  //       lat: res.coords.latitude,
-  //       long: res.coords.longitude,
-  //     }).then(res => {
-  //       console.log('res===>', res);
-  //       setlocationadd(res.results[0].formatted_address);
-  //     });
-  //   });
-  // };
   useEffect(() => {
     if (routeCoordinates.length > 0) {
       animateRoute();
@@ -101,185 +120,204 @@ const Category = props => {
     }).start();
   };
 
-const Mapcom=useCallback(()=>{
-  return(<MapView
-    ref={mapRef}
-    provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-    style={styles.map}
-    region={
-      {
-              latitude: currentLocation?.latitude,
-              longitude: currentLocation?.longitude,
-              latitudeDelta: 0.015,
-              longitudeDelta: 0.0121,
-            }
-    }
-    showsUserLocation={true}
-    >
-    {/* {destination && ( */}
-   {productdetail?.posted_by?.location?.coordinates?.length>0&& <Marker
-          coordinate={{
-            latitude: productdetail?.posted_by?.location.coordinates[1],
-            longitude: productdetail?.posted_by?.location.coordinates[0],
-          }}
-          title={'Destination'}
-          pinColor="green"
-        // image={require('../../Assets/Images/Start.png')}
-        />}
-    {currentLocation?.latitude&&<Marker
-          coordinate={{
-            latitude: currentLocation?.latitude,
-            longitude: currentLocation?.longitude,
-          }}
-          title={'Sourse'}
-          pinColor={'red'}
-        />}
-    {currentLocation && productdetail?.posted_by?.location?.coordinates?.length>0&& (
-    <MapViewDirections
-      origin={{
-        latitude: currentLocation?.latitude,
-        longitude: currentLocation?.longitude,
-      }}
-      destination={{
-        latitude: productdetail?.posted_by?.location?.coordinates[1],
-        longitude: productdetail?.posted_by?.location?.coordinates[0],
-      }}
-      onReady={result => {
-        const edgePadding = {
-          top: 100,
-          right: 50,
-          bottom: 100,
-          left: 50,
-        };
-        console.log('MapViewDirections: result', result);
-        mapRef.current.fitToCoordinates(result.coordinates, {
-          edgePadding,
-          animated: true,
-        });
-        setRouteCoordinates(result.coordinates);
-      }}
-      onError={(errorMessage) => {
-        console.error('MapViewDirections Error: ', errorMessage);
-      }}
-      apikey={Googlekey}
-      strokeWidth={3}
-      strokeColor={Constants.custom_yellow}
-      optimizeWaypoints={true}
-    />
-     )} 
-  </MapView>)
-},[rendermap,currentLocation])
+  const Mapcom = useCallback(() => {
+    return (
+      <MapView
+        ref={mapRef}
+        provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+        style={styles.map}
+        region={{
+          latitude: usedLocation?.latitude,
+          longitude: usedLocation?.longitude,
+          latitudeDelta: 0.015,
+          longitudeDelta: 0.0121,
+        }}
+        showsUserLocation={true}
+      >
+        {/* {destination && ( */}
+        {productdetail?.posted_by?.location?.coordinates?.length > 0 && (
+          <Marker
+            coordinate={{
+              latitude: productdetail?.posted_by?.location.coordinates[1],
+              longitude: productdetail?.posted_by?.location.coordinates[0],
+            }}
+            title={'Destination'}
+            pinColor="green"
+            // image={require('../../Assets/Images/Start.png')}
+          />
+        )}
+        {usedLocation?.latitude && (
+          <Marker
+            coordinate={{
+              latitude: usedLocation?.latitude,
+              longitude: usedLocation?.longitude,
+            }}
+            title={'Sourse'}
+            pinColor={'red'}
+          />
+        )}
+        {usedLocation &&
+          productdetail?.posted_by?.location?.coordinates?.length > 0 && (
+            <MapViewDirections
+              origin={{
+                latitude: usedLocation?.latitude,
+                longitude: usedLocation?.longitude,
+              }}
+              destination={{
+                latitude: productdetail?.posted_by?.location?.coordinates[1],
+                longitude: productdetail?.posted_by?.location?.coordinates[0],
+              }}
+              onReady={result => {
+                const edgePadding = {
+                  top: 100,
+                  right: 50,
+                  bottom: 100,
+                  left: 50,
+                };
+                console.log('MapViewDirections: result', result);
+                mapRef.current.fitToCoordinates(result.coordinates, {
+                  edgePadding,
+                  animated: true,
+                });
+                setRouteCoordinates(result.coordinates);
+              }}
+              onError={errorMessage => {
+                console.error('MapViewDirections Error: ', errorMessage);
+              }}
+              apikey={Googlekey}
+              strokeWidth={3}
+              strokeColor={Constants.custom_yellow}
+              optimizeWaypoints={true}
+            />
+          )}
+      </MapView>
+    );
+  }, [rendermap, usedLocation]);
 
   return (
     <View style={styles.container}>
-      <View style={{height:'35%'}}>
-      {currentLocation?.latitude&&<Mapcom />}
-      <TouchableOpacity
-          style={styles.baccover}
-          onPress={() => goBack()}>
-          <BackIcon height={20} width={20}/>
+      <View style={{ height: '35%' }}>
+        {usedLocation?.latitude && <Mapcom />}
+        <TouchableOpacity style={styles.baccover} onPress={() => goBack()}>
+          <BackIcon height={20} width={20} />
         </TouchableOpacity>
       </View>
-      <KeyboardAvoidingView 
-                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                     style={{flex:1}}>
-      <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
-        <Text style={styles.maintxt}>Order category</Text>
-        <TouchableOpacity style={[styles.inputbox, styles.shadowProp]}>
-          <View style={[styles.inrshabox, styles.shadowProp2]}>
-            <Text style={styles.txt} numberOfLines={2}>
-              {productdetail?.posted_by?.address}
-            </Text>
-            <LocationIcon />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.inputbox, styles.shadowProp]}>
-          <View style={[styles.inrshabox, styles.shadowProp2]}>
-            <Text style={styles.txt} numberOfLines={2}>
-              {locationadd}
-            </Text>
-            <LocationIcon />
-          </View>
-        </TouchableOpacity>
-
-        <View style={[styles.inputbox, styles.shadowProp, {height: 110}]}>
-          <TextInput
-            style={[styles.txtinp, styles.shadowProp2]}
-            multiline={true}
-            numberOfLines={4}
-            placeholder="Description"
-            value={description}
-            onChangeText={e => setdescription(e)}
-            placeholderTextColor={Constants.customgrey}></TextInput>
-        </View>
-
-        {extradate && (
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+          <Text style={styles.maintxt}>Order category</Text>
           <View style={[styles.inputbox, styles.shadowProp]}>
+            <View style={[styles.inrshabox, styles.shadowProp2]}>
+              <Text style={styles.txt} numberOfLines={2}>
+                {productdetail?.posted_by?.address}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.ndboxcov}>
+            <View
+              style={[styles.inputbox, styles.shadowProp, { width: '85%' }]}
+            >
+              <View style={[styles.inrshabox, styles.shadowProp2]}>
+                <Text style={styles.txt} numberOfLines={2}>
+                  {usedAddress}
+                </Text>
+              </View>
+            </View>
+            <TouchableOpacity
+              style={styles.locationiconCov}
+              onPress={() => navigate('Shipping')}
+            >
+              <LocationEditIcon height={30} width={30} />
+            </TouchableOpacity>
+          </View>
+
+          <View style={[styles.inputbox, styles.shadowProp, { height: 110 }]}>
             <TextInput
               style={[styles.txtinp, styles.shadowProp2]}
-              value={moment(sheddate).format('DD/MM/YYYY ')}
-              editable={false}></TextInput>
+              multiline={true}
+              numberOfLines={4}
+              placeholder="Description"
+              value={description}
+              onChangeText={e => setdescription(e)}
+              placeholderTextColor={Constants.customgrey}
+            ></TextInput>
           </View>
-        )}
 
-        <DatePicker
-          // style={{zIndex: '50'}}
-          modal
-          open={open}
-          minimumDate={new Date()}
-          mode="date"
-          theme="dark"
-          // maximumDate={maxDate}
-          // androidVariant="nativeAndroid"
-          date={sheddate}
-          onConfirm={date => {
-            setOpen(false);
-            setsheddate(date);
-            setextradate(date);
-            // console.log(date.toString())
-          }}
-          onCancel={() => {
-            setOpen(false);
-          }}
-        />
+          {extradate && (
+            <View style={[styles.inputbox, styles.shadowProp]}>
+              <TextInput
+                style={[styles.txtinp, styles.shadowProp2]}
+                value={moment(sheddate).format('DD/MM/YYYY ')}
+                editable={false}
+              ></TextInput>
+            </View>
+          )}
 
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            paddingHorizontal: 20,
-            gap: 5,
-          }}>
-          <Text style={styles.shdtxt}>Schedule Delievery</Text>
-          <TouchableOpacity onPress={() => setOpen(true)}>
-            {extradate ? (
-              <Image
-                source={require('../../Assets/Images/on.png')}
-                style={styles.onoffbtn}
-              />
-            ) : (
-              <Image
-                source={require('../../Assets/Images/off.png')}
-                style={styles.onoffbtn}
-              />
-            )}
+          <DatePicker
+            // style={{zIndex: '50'}}
+            modal
+            open={open}
+            minimumDate={new Date()}
+            mode="date"
+            theme="dark"
+            // maximumDate={maxDate}
+            // androidVariant="nativeAndroid"
+            date={sheddate}
+            onConfirm={date => {
+              setOpen(false);
+              setsheddate(date);
+              setextradate(date);
+              // console.log(date.toString())
+            }}
+            onCancel={() => {
+              setOpen(false);
+            }}
+          />
+
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingHorizontal: 20,
+              gap: 5,
+            }}
+          >
+            <Text style={styles.shdtxt}>Schedule Delievery</Text>
+            <TouchableOpacity onPress={() => setOpen(true)}>
+              {extradate ? (
+                <Image
+                  source={require('../../Assets/Images/on.png')}
+                  style={styles.onoffbtn}
+                />
+              ) : (
+                <Image
+                  source={require('../../Assets/Images/off.png')}
+                  style={styles.onoffbtn}
+                />
+              )}
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity
+            style={[styles.button, styles.shadowProp]}
+            onPress={() => {
+              if (user?.shipping_address?.address) {
+                navigate('CheckOut');
+                setselectedProductData({
+                  ...selectedProductData,
+                  description: description,
+                  sheduledate: extradate,
+                });
+              } else {
+                navigate('Shipping');
+              }
+            }}
+          >
+            <Text style={styles.buttontxt}>Next</Text>
           </TouchableOpacity>
-        </View>
-        <TouchableOpacity
-          style={[styles.button, styles.shadowProp]}
-          onPress={() =>
-            navigate('Shipping', {
-              useradd: locationadd,
-              description: description,
-              sheduledate: extradate,
-              currentLocation: currentLocation,
-            })
-          }>
-          <Text style={styles.buttontxt}>Next</Text>
-        </TouchableOpacity>
-      </ScrollView>
-     </KeyboardAvoidingView>
-    
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 };
@@ -295,18 +333,18 @@ const styles = StyleSheet.create({
     flex: 1,
     // height:400
   },
-  baccover:{
-            position: 'absolute',
-            top: 20,
-            left: 20,
-            borderRadius: 30,
-            backgroundColor:Constants.white,
-            height:35,
-            width:35,
-            justifyContent:'center',
-            alignItems:'center',
-            boxShadow: '0px 2px 5px 0.08px grey',
-          },
+  baccover: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    borderRadius: 30,
+    backgroundColor: Constants.white,
+    height: 35,
+    width: 35,
+    justifyContent: 'center',
+    alignItems: 'center',
+    boxShadow: '0px 2px 5px 0.08px grey',
+  },
   inputbox: {
     backgroundColor: '#cdcdcd',
     borderRadius: 15,
@@ -384,5 +422,20 @@ const styles = StyleSheet.create({
     height: 25,
     width: 25,
     resizeMode: 'contain',
+  },
+  ndboxcov: {
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'center',
+    width: '90%',
+    alignSelf: 'center',
+  },
+  locationiconCov: {
+    backgroundColor: Constants.white,
+    borderRadius: 7,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 50,
+    width: '13%',
   },
 });

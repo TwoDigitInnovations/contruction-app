@@ -13,6 +13,7 @@ import Constants, { FONTS } from '../../Assets/Helpers/constant';
 import { RightarrowIcon } from '../../../Theme';
 import { GetApi } from '../../Assets/Helpers/Service';
 import { LoadContext, ToastContext } from '../../../App';
+import { navigate } from '../../../navigationRef';
 
 const Menu = () => {
   const [toast, setToast] = useContext(ToastContext);
@@ -75,7 +76,7 @@ const Menu = () => {
             <Text style={styles.headtxt}>{item?.name}</Text>
           </View>
 
-           {item?.attributes&&item?.attributes.map((it,ind)=> <View style={styles.box} key={ind}>
+           {item?.attributes&&item?.attributes.map((it,ind)=> <TouchableOpacity style={styles.box} key={ind} onPress={()=>navigate('StoreWiseProduct',{categoryId:item?._id,attributeName:it?.name})}>
               <View
                 style={{ flexDirection: 'row', gap: 20, alignItems: 'center',marginBottom:((selCatList?.length===index+1&&item?.attributes?.length>0&&ind === item.attributes.length - 1)||(catagorylist?.length-2===index&&item?.attributes?.length>0&&catagorylist[index+1]?.attributes?.length===0&&ind === item.attributes.length - 1))?100:0 }}
               >
@@ -83,7 +84,7 @@ const Menu = () => {
                 <Text style={styles.opttxt}>{it?.name}</Text>
               </View>
               <RightarrowIcon color={Constants.black} />
-            </View>)}
+            </TouchableOpacity>)}
             
         </View>))}
       </ScrollView>

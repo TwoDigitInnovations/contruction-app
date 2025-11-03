@@ -9,7 +9,7 @@ import {
     View,
   } from 'react-native';
   import React, {useContext, useEffect, useState} from 'react';
-  import Constants, {FONTS} from '../../Assets/Helpers/constant';
+  import Constants, {Currency, FONTS} from '../../Assets/Helpers/constant';
   import {navigate} from '../../../navigationRef';
   import Header from '../../Assets/Component/Header';
   import {DeleteIcon, StatusIcon, ThreedotIcon, ViewIcon} from '../../../Theme';
@@ -200,7 +200,7 @@ import moment from 'moment';
                       <Text style={styles.secendtxt}>{item?.product?.categoryname}</Text>
                     </View>
                   </View>
-                  <Text style={styles.amount}>₹{item?.price}</Text>
+                  <Text style={styles.amount}>{Currency} {item?.price}</Text>
                 </View>
                 <View style={styles.cancelAndLogoutButtonWrapStyle2}>
                   {/* <TouchableOpacity style={styles.cancelButtonStyle}>

@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import React, { useContext, useState } from 'react';
-import Constants, {FONTS} from '../../Assets/Helpers/constant';
+import Constants, {Currency, FONTS} from '../../Assets/Helpers/constant';
 import {CheckboxactiveIcon, CheckboxIcon} from '../../../Theme';
 import Header from '../../Assets/Component/Header';
 import moment from 'moment';
@@ -79,7 +79,7 @@ const OrderDetail = (props) => {
                 <Text style={styles.secendtxt}>12</Text>
               </View> */}
             </View>
-            <Text style={styles.amount}>₹{data?.price}</Text>
+            <Text style={styles.amount}>{Currency} {data?.price}</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.inputbox2, styles.shadowProp]}>
@@ -124,7 +124,7 @@ const OrderDetail = (props) => {
                   </Text>
                 </View> */}
               </View>
-              <Text style={styles.amount}>₹{data?.product?.price}</Text>
+              <Text style={styles.amount}>{Currency} {data?.product?.price}</Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
   },
   amount: {
     color: Constants.custom_yellow,
-    fontSize: 24,
+    fontSize: 18,
     fontFamily: FONTS.Bold,
     alignSelf: 'flex-end',
   },

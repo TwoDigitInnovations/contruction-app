@@ -6,7 +6,7 @@ import {
     View,
   } from 'react-native';
   import React, {useContext, useEffect, useState} from 'react';
-  import Constants, {FONTS} from '../../Assets/Helpers/constant';
+  import Constants, {Currency, FONTS} from '../../Assets/Helpers/constant';
   import {navigate} from '../../../navigationRef';
   import Header from '../../Assets/Component/Header';
   import {ThreedotIcon, TickboxIcon, TickIcon} from '../../../Theme';
@@ -101,7 +101,7 @@ import {
                 ) : orderdata?.status === 'Delivered' ?(
                   <Text style={styles.status}>Delivered</Text>
                 ):<Text></Text>}
-                <Text style={styles.amount}>₹{orderdata?.price}</Text>
+                <Text style={styles.amount}>{Currency} {orderdata?.price}</Text>
               </View>
             </View>
           </View>
@@ -142,7 +142,7 @@ import {
               </View>
             </View> */}
             <View style={{alignItems:'flex-end',width:'100%'}}>
-            <Text style={styles.amount}>₹{orderdata?.price}</Text>
+            <Text style={styles.amount}>{Currency} {orderdata?.price}</Text>
             </View>
           </View>
         </View>
@@ -179,7 +179,7 @@ import {
                   12
                 </Text>
               </View> */}
-              <Text style={styles.amount}>₹{orderdata?.product?.price}</Text>
+              <Text style={styles.amount}>{Currency} {orderdata?.product?.price}</Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -275,7 +275,7 @@ import {
     },
     amount: {
       color: Constants.custom_yellow,
-      fontSize: 24,
+      fontSize: 18,
       fontFamily: FONTS.Bold,
       alignSelf: 'flex-end',
     },

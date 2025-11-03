@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
-import Constants, {FONTS} from '../../Assets/Helpers/constant';
+import Constants, {Currency, FONTS} from '../../Assets/Helpers/constant';
 import {navigate} from '../../../navigationRef';
 import { LoadContext, ToastContext } from '../../../App';
 import { GetApi } from '../../Assets/Helpers/Service';
@@ -82,7 +82,7 @@ const getorderhistory = () => {
                 </View>
                 
               </View>
-              <Text style={styles.amount}>₹{item?.price}</Text>
+              <Text style={styles.amount}>{Currency} {item?.price}</Text>
             </View>
             
           </TouchableOpacity>
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   },
   amount: {
     color: Constants.custom_yellow,
-    fontSize: 24,
+    fontSize: 18,
     fontFamily: FONTS.Bold,
     alignSelf: 'flex-end',
   },

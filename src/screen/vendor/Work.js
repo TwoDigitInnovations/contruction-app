@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
-import Constants, {FONTS} from '../../Assets/Helpers/constant';
+import Constants, {Currency, FONTS} from '../../Assets/Helpers/constant';
 import {navigate} from '../../../navigationRef';
 import Header from '../../Assets/Component/Header';
 import {DeleteIcon, StatusIcon, ThreedotIcon, ViewIcon} from '../../../Theme';
@@ -166,7 +166,7 @@ const Work = () => {
                         ) : (
                           <Text></Text>
                         )}
-                        <Text style={styles.amount}>₹{item?.price}</Text>
+                        <Text style={styles.amount}>{Currency} {item?.price}</Text>
                       </View>
                     </View>
                   </View>
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
   },
   amount: {
     color: Constants.custom_yellow,
-    fontSize: 24,
+    fontSize: 18,
     fontFamily: FONTS.Bold,
     // alignSelf: 'flex-end',
   },

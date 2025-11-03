@@ -56,7 +56,7 @@ const Project = () => {
                 <View style={styles.headcov}>
                   <BackIcon color={Constants.black} style={styles.aliself} onPress={()=>goBack()}/>
                     <TouchableOpacity style={styles.addtxt} onPress={()=>navigate('Shipping')}>
-                  <Text style={styles.backtxt} numberOfLines={1}>{user?.address?user?.address:locationadd}</Text>
+                  <Text style={styles.backtxt} numberOfLines={1}>{user?.shipping_address?.address?user?.shipping_address?.address:locationadd}</Text>
                   <Down height={20} width={20} color={Constants.white}/>
                   </TouchableOpacity>
                 </View>

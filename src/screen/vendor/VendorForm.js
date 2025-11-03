@@ -203,13 +203,14 @@ const VendorForm = () => {
           );
           reset('Vendortab');
         } else {
+          setToast(res.message);
         }
       },
       err => {
         setLoading(false);
         console.log(err);
         // setToast(res?.message);
-        setToast([{error: true, message: res.message}]);
+        setToast(res.message);
       },
     );
   };
