@@ -107,7 +107,7 @@ const SignIn = props => {
         </ImageBackground>
       </View>
       <KeyboardAvoidingView 
-              // behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
               style={{flex:1}}
             >
       <ScrollView style={styles.btmpart} showsVerticalScrollIndicator={false}>

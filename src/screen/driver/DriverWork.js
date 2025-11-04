@@ -12,7 +12,7 @@ import {
   import Constants, {Currency, FONTS} from '../../Assets/Helpers/constant';
   import {navigate} from '../../../navigationRef';
   import Header from '../../Assets/Component/Header';
-  import {DeleteIcon, StatusIcon, ThreedotIcon, ViewIcon} from '../../../Theme';
+  import {DeleteIcon, LocationIcon, StatusIcon, ThreedotIcon, ViewIcon} from '../../../Theme';
 import { LoadContext, ToastContext, UserContext } from '../../../App';
 import CuurentLocation from '../../Assets/Component/CuurentLocation';
 import { GetApi, Post } from '../../Assets/Helpers/Service';
@@ -152,11 +152,11 @@ import moment from 'moment';
           }}>Ongoing</Text>
         </TouchableOpacity>
       </View>
-        <View style={{marginBottom:70,flex:1}}>
+        <View style={{marginBottom:70}}>
         <FlatList
           data={orderlist}
           showsVerticalScrollIndicator={false}
-          renderItem={({item},i) =>{return<View key={i}>
+          renderItem={({item},i) =><View key={i}>
               <TouchableOpacity
                 style={styles.box}
                 >
@@ -177,7 +177,10 @@ import moment from 'moment';
                     />
                     <View>
                       <Text style={styles.name}>{item?.user?.username}</Text>
+                       <View style={{flexDirection:'row',gap:7,alignItems:'center'}}>
                       <Text style={styles.redeembtn}>{moment(item?.sheduledate?item?.sheduledate:item?.createdAt).format('DD-MM-YYYY ')}</Text>
+                    {item?.sheduledate&&<Text style={styles.amount2}>This is a schedule order</Text>}
+                    </View>
                     </View>
                   </View>
                   <TouchableOpacity
@@ -192,13 +195,15 @@ import moment from 'moment';
                    {item?.user?.address}
                   </Text>
                 </View>
-  
-                <View style={styles.txtcol}>
-                  <View style={{}}>
                     <View style={styles.secendpart}>
-                      <Text style={styles.secendboldtxt}>Category : </Text>
-                      <Text style={styles.secendtxt}>{item?.product?.categoryname}</Text>
+                      <Text style={styles.secendboldtxt}>Product : </Text>
+                      <Text style={styles.secendtxt}>{item?.product?.name}</Text>
                     </View>
+
+                <View style={styles.txtcol}>
+                                      <View style={styles.secendpart}>
+                      <Text style={styles.secendboldtxt}>{item?.inputvalue?"Qty":"Category"} : </Text>
+                      <Text style={styles.secendtxt}> {item?.inputvalue?`${item?.inputvalue} ${item?.selectedAtribute?.unit}`:item?.product?.categoryname}</Text>
                   </View>
                   <Text style={styles.amount}>{Currency} {item?.price}</Text>
                 </View>
@@ -231,7 +236,7 @@ import moment from 'moment';
                     </TouchableOpacity>}
                     <TouchableOpacity style={styles.popuplistcov} onPress={()=>{navigate('Map',{orderid:item._id,type:'client'}),setModalVisible(null)}}>
                       <View style={styles.popuplistcov2}>
-                        <DeleteIcon color={Constants.customgrey}/>
+                        <LocationIcon color={Constants.customgrey}/>
                         <Text>Client location</Text>
                       </View>
                     </TouchableOpacity>
@@ -243,7 +248,7 @@ import moment from 'moment';
                 </TouchableOpacity>}
               
             </View>}
-          }
+          
           ListEmptyComponent={() => (
             <View
               style={{
@@ -362,7 +367,7 @@ import moment from 'moment';
       // flex: 1,
       // justifyContent: 'space-between',
       marginLeft: 10,
-      marginVertical: 5,
+      marginTop: 5,
     },
     secendboldtxt: {
       color: Constants.black,
@@ -388,10 +393,15 @@ import moment from 'moment';
     },
     amount: {
       color: Constants.custom_yellow,
-      fontSize: 24,
+      fontSize: 18,
       fontFamily: FONTS.Bold,
       alignSelf: 'flex-end',
     },
+    amount2: {
+    color: Constants.custom_yellow,
+    fontSize: 14,
+    fontFamily: FONTS.Bold,
+  },
   
     ///////Pop up model////
     centeredView: {

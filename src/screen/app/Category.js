@@ -235,7 +235,11 @@ const Category = props => {
 
           <View style={[styles.inputbox, styles.shadowProp, { height: 110 }]}>
             <TextInput
-              style={[styles.txtinp, styles.shadowProp2]}
+              style={[
+                styles.txtinp,
+                styles.shadowProp2,
+                { textAlignVertical: 'top' },
+              ]}
               multiline={true}
               numberOfLines={4}
               placeholder="Description"
@@ -244,16 +248,6 @@ const Category = props => {
               placeholderTextColor={Constants.customgrey}
             ></TextInput>
           </View>
-
-          {extradate && (
-            <View style={[styles.inputbox, styles.shadowProp]}>
-              <TextInput
-                style={[styles.txtinp, styles.shadowProp2]}
-                value={moment(sheddate).format('DD/MM/YYYY ')}
-                editable={false}
-              ></TextInput>
-            </View>
-          )}
 
           <DatePicker
             // style={{zIndex: '50'}}
@@ -276,28 +270,28 @@ const Category = props => {
             }}
           />
 
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              paddingHorizontal: 20,
-              gap: 5,
-            }}
-          >
-            <Text style={styles.shdtxt}>Schedule Delievery</Text>
-            <TouchableOpacity onPress={() => setOpen(true)}>
-              {extradate ? (
-                <Image
-                  source={require('../../Assets/Images/on.png')}
-                  style={styles.onoffbtn}
-                />
-              ) : (
-                <Image
-                  source={require('../../Assets/Images/off.png')}
-                  style={styles.onoffbtn}
-                />
-              )}
-            </TouchableOpacity>
+          <View style={styles.flr}>
+            <View style={styles.flr2}>
+              <Text style={styles.shdtxt}>Schedule Delievery</Text>
+              <TouchableOpacity onPress={() =>{extradate?setextradate(null):setOpen(true)}}>
+                {extradate ? (
+                  <Image
+                    source={require('../../Assets/Images/on.png')}
+                    style={styles.onoffbtn}
+                  />
+                ) : (
+                  <Image
+                    source={require('../../Assets/Images/off.png')}
+                    style={styles.onoffbtn}
+                  />
+                )}
+              </TouchableOpacity>
+            </View>
+            {extradate && (
+              <Text style={[styles.shdtxt,{color:Constants.custom_yellow}]} onPress={() => setOpen(true)}>
+                {moment(sheddate).format('DD/MM/YYYY ')}
+              </Text>
+            )}
           </View>
           <TouchableOpacity
             style={[styles.button, styles.shadowProp]}
@@ -437,5 +431,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 50,
     width: '13%',
+  },
+  flr: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent:'space-between',
+    paddingHorizontal:20,
+    marginTop:10
+  },
+  flr2: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap:5
   },
 });

@@ -2,6 +2,7 @@ import {
   Image,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -73,9 +74,10 @@ const VenderOrders = props => {
             />
             <View>
               <Text style={styles.name}>{orderdata?.user?.username}</Text>
-              <Text style={styles.redeembtn}>
-                {moment(orderdata?.createdAt).format('DD-MM-YYYY ')}
-              </Text>
+              <View style={{flexDirection:'row',gap:7,alignItems:'center'}}>
+              <Text style={styles.redeembtn}>{moment(orderdata?.sheduledate?orderdata?.sheduledate:orderdata?.createdAt).format('DD-MM-YYYY ')}</Text>
+              {orderdata?.sheduledate&&<Text style={styles.amount2}>This is a schedule order</Text>}
+            </View>
             </View>
           </View>
         </View>
@@ -91,10 +93,6 @@ const VenderOrders = props => {
                 {orderdata?.product?.categoryname}
               </Text>
             </View>
-            {/* <View style={styles.secendpart}>
-              <Text style={styles.secendboldtxt}>QTY : </Text>
-              <Text style={styles.secendtxt}>12</Text>
-            </View> */}
             <View style={styles.statuscov}>
               {orderdata?.status === 'Driverassigned' ? (
                 <Text style={styles.status}>Driver Assigned</Text>
@@ -148,43 +146,47 @@ const VenderOrders = props => {
           </View>
         </View>
       )}
-      <TouchableOpacity style={[styles.box2, styles.shadowProp]}>
+      <View style={[styles.box2, styles.shadowProp]}>
         <View style={[styles.inrshabox, styles.shadowProp2]}>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <View style={{flexDirection: 'row'}}>
               <Image
-                source={require('../../Assets/Images/cement.png')}
-                // source={
-                //   userDetail?.img
-                //     ? {
-                //         uri: `${userDetail.img}`,
-                //       }
-                //     : require('../../Assets/Images/profile.png')
-                // }
+               source={
+                    orderdata?.selectedAtribute?.image
+                      ? {
+                          uri: `${orderdata?.selectedAtribute?.image}`,
+                        }
+                      : require('../../Assets/Images/cement.png')
+                  }
                 style={styles.hi2}
-                // onPress={()=>navigate('Account')}
               />
+              <View>
               <Text style={styles.name2}>{orderdata?.product?.name}</Text>
+              {orderdata?.inputvalue&&<Text style={styles.waigh}>{orderdata?.selectedAtribute?.name}</Text>}
+            </View>
             </View>
             <TickIcon style={{}} />
           </View>
-          <View style={[styles.txtcol, {marginVertical: 10}]}>
-            {/* <View style={styles.secendpart}>
-              <Text
-                style={[
-                  styles.secendboldtxt,
-                  {color: Constants.custom_yellow},
-                ]}>
-                QTY :{' '}
-              </Text>
-              <Text style={[styles.secendtxt, {color: Constants.white}]}>
-                12
-              </Text>
-            </View> */}
+          <View style={[styles.txtcol, {marginVertical: 10,alignItems:'center'}]}>
+            {orderdata?.inputvalue&&<Text style={styles.waigh}> {orderdata?.inputvalue} {orderdata?.selectedAtribute?.unit}</Text>}
             <Text style={styles.amount}>{Currency} {orderdata?.product?.price}</Text>
           </View>
         </View>
-      </TouchableOpacity>
+      </View>
+      <View style={[styles.inputbox, styles.shadowProp, { height: 110 }]}>
+            <TextInput
+              style={[
+                styles.txtinp,
+                styles.shadowProp3,
+                { textAlignVertical: 'top' },
+              ]}
+              multiline={true}
+              numberOfLines={4}
+              editable={false}
+              placeholder="Description"
+              value={orderdata?.description}
+            ></TextInput>
+          </View>
     </View>
   );
 };
@@ -235,6 +237,11 @@ const styles = StyleSheet.create({
     height: 35,
     borderRadius: 8,
   },
+  waigh: {
+      color: Constants.white,
+      fontSize: 14,
+      fontFamily: FONTS.SemiBold,
+    },
   name: {
     color: Constants.black,
     fontFamily: FONTS.SemiBold,
@@ -243,7 +250,7 @@ const styles = StyleSheet.create({
   name2: {
     color: Constants.white,
     fontFamily: FONTS.SemiBold,
-    fontSize: 14,
+    fontSize: 16,
     alignSelf: 'center',
   },
   secendpart: {
@@ -288,11 +295,37 @@ const styles = StyleSheet.create({
     padding: 7,
     height: 150,
   },
+  inputbox: {
+    backgroundColor: '#cdcdcd',
+    borderRadius: 15,
+    marginVertical: 10,
+    width: '100%',
+    alignSelf: 'center',
+    padding: 7,
+    height: 70,
+  },
   shadowProp: {
     boxShadow: '0px 0px 8px 0.05px grey',
   },
   shadowProp2: {
     boxShadow: 'inset 0px 0px 8px 5px #1b1e22',
+  },
+  shadowProp3: {
+    boxShadow: 'inset 0px 0px 8px 5px #cdcdcd',
+  },
+  txtinp: {
+    fontSize: 16,
+    color: Constants.black,
+    fontFamily: FONTS.Medium,
+    backgroundColor: 'red',
+    flex: 1,
+    borderRadius: 15,
+    backgroundColor: Constants.white,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 5,
+    paddingHorizontal: 15,
   },
   inrshabox: {
     flex: 1,
@@ -314,5 +347,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     alignItems: 'center',
+  },
+  amount2: {
+    color: Constants.custom_yellow,
+    fontSize: 14,
+    fontFamily: FONTS.Bold,
   },
 });

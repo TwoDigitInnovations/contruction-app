@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
-import Constants, {FONTS} from '../../Assets/Helpers/constant';
+import Constants, {Currency, FONTS} from '../../Assets/Helpers/constant';
 import Header from '../../Assets/Component/Header';
 import {
   ApprovedIcon,
@@ -91,14 +91,14 @@ const Orders = () => {
                     <Text style={[styles.txt, {fontSize: 16}]}>
                       {item.productname}
                     </Text>
-                    <Text style={styles.txt}>{moment(item?.createdAt).format('DD-MM-YYYY ')}</Text>
-                    <Text style={styles.txt}>{item.price} $</Text>
+                    <Text style={styles.txt}>{moment(item?.sheduledate?item?.sheduledate:item?.createdAt).format('DD-MM-YYYY ')}</Text>
+                    <Text style={styles.txt}>{Currency} {item.price}</Text>
                   </View>
                 </View>
-                {/* <View style={{}}>
-                  <Text style={styles.txt}>QTY - 100 kg</Text> */}
+                <View style={{alignItems:'center'}}>
+                  {item?.inputvalue&&<Text style={styles.txt}> {item?.inputvalue} {item?.selectedAtribute?.unit}</Text>}
                   <Text style={styles.deltxt} >{item.status}</Text>
-                {/* </View> */}
+                </View>
               </View>
             </TouchableOpacity>
           )}
@@ -107,11 +107,11 @@ const Orders = () => {
               style={{
                 alignItems: 'center',
                 justifyContent: 'center',
-                height: Dimensions.get('window').height - 200,
+                height: Dimensions.get('window').height - 300,
               }}>
               <Text
                 style={{
-                  color: Constants.black,
+                  color: Constants.white,
                   fontSize: 20,
                   fontFamily: FONTS.Medium,
                 }}>

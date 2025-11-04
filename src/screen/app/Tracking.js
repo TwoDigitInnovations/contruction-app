@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 import React, {useContext, useEffect, useRef, useState} from 'react';
-import Constants, {FONTS, Googlekey} from '../../Assets/Helpers/constant';
+import Constants, {Currency, FONTS, Googlekey} from '../../Assets/Helpers/constant';
 import Header from '../../Assets/Component/Header';
 import {LocationIcon, TotalorderIcon} from '../../../Theme';
 import MapView, {
@@ -277,11 +277,11 @@ useEffect(() => {
               <View style={{}}>
                 <Text style={[styles.txt2, {fontSize: 16}]}>{orderData?.productname}</Text>
                 <Text style={styles.txt2}>{moment(orderData?.sheduledate?orderData?.sheduledate:orderData?.createdAt).format('DD-MM-YYYY ')}</Text>
-                <Text style={styles.txt2}>{orderData?.price} $</Text>
+                <Text style={styles.txt2}>{Currency} {orderData?.price}</Text>
               </View>
             </View>
-            <View style={{}}>
-              {/* <Text style={styles.txt2}>QTY - 100 kg</Text> */}
+            <View style={{alignItems:'center',gap:3}}>
+              {orderData?.inputvalue&&<Text style={[styles.txt,{color:Constants.white}]}> {orderData?.inputvalue} {orderData?.selectedAtribute?.unit}</Text>}
               <Text style={styles.deltxt}>{orderData?.status}</Text>
             </View>
           </View>

@@ -283,7 +283,7 @@ const Map = props => {
         )}
       </View>
       <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
-        <TouchableOpacity style={styles.box}>
+        <View style={styles.box}>
           <View style={{flexDirection: 'row'}}>
             <Image
               // source={require('../../Assets/Images/profile4.png')}
@@ -299,9 +299,10 @@ const Map = props => {
             />
             <View>
               <Text style={styles.name}>{orderdetail?.user?.username}</Text>
-              <Text style={styles.redeembtn}>
-                {moment(orderdetail?.created_at).format('DD-MM-YYYY')}
-              </Text>
+              <View style={{flexDirection:'row',gap:7,alignItems:'center'}}>
+                                            <Text style={styles.redeembtn}>{moment(orderdetail?.sheduledate?orderdetail?.sheduledate:orderdetail?.createdAt).format('DD-MM-YYYY ')}</Text>
+                                            {orderdetail?.sheduledate&&<Text style={styles.amount2}>This is a schedule order</Text>}
+                                          </View>
             </View>
           </View>
           <View style={styles.secendpart}>
@@ -325,45 +326,36 @@ const Map = props => {
             </View>
             <Text style={styles.amount}>{Currency} {orderdetail?.price}</Text>
           </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.box2, styles.shadowProp]}>
+        </View>
+        <View style={[styles.box2, styles.shadowProp,{ marginBottom: orderdetail?.status != 'Delivered' ? 80 : 10 }]}>
           <View style={[styles.inrshabox, styles.shadowProp2]}>
             <View
               style={{flexDirection: 'row', justifyContent: 'space-between'}}>
               <View style={{flexDirection: 'row'}}>
                 <Image
-                  source={require('../../Assets/Images/cement.png')}
-                  // source={
-                  //   userDetail?.img
-                  //     ? {
-                  //         uri: `${userDetail.img}`,
-                  //       }
-                  //     : require('../../Assets/Images/profile.png')
-                  // }
+                  source={
+                    orderdetail?.selectedAtribute?.image
+                      ? {
+                          uri: `${orderdetail?.selectedAtribute?.image}`,
+                        }
+                      : require('../../Assets/Images/cement.png')
+                  }
                   style={styles.hi2}
-                  // onPress={()=>navigate('Account')}
                 />
+                <View>
                 <Text style={styles.name2}>{orderdetail?.product?.name}</Text>
+                {orderdetail?.inputvalue&&<Text style={styles.waigh}>{orderdetail?.selectedAtribute?.name}</Text>}
+              </View>
               </View>
               <TickIcon style={{}} />
             </View>
             <View style={[styles.txtcol, {marginVertical: 10}]}>
-              {/* <View style={styles.secendpart}>
-                        <Text
-                          style={[
-                            styles.secendboldtxt,
-                            {color: Constants.custom_yellow},
-                          ]}>
-                          QTY :{' '}
-                        </Text>
-                        <Text style={[styles.secendtxt, {color: Constants.white}]}>
-                          12
-                        </Text>
-                      </View> */}
+              {orderdetail?.inputvalue&&<Text style={styles.buttontxt}> {orderdetail?.inputvalue} {orderdetail?.selectedAtribute?.unit}</Text>}
               <Text style={styles.amount}>{Currency} {orderdetail?.product?.price}</Text>
             </View>
           </View>
-        </TouchableOpacity>
+        </View>
+      </ScrollView>
         {orderdetail?.status === 'Collected' && (
           <TouchableOpacity
             style={styles.signInbtn}
@@ -385,7 +377,6 @@ const Map = props => {
             <Text style={styles.buttontxt}>Accept Ride</Text>
           </TouchableOpacity>
         )}
-      </ScrollView>
       <Modal
         animationType="none"
         transparent={true}
@@ -562,7 +553,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     height: 50,
     width: 50,
-    // borderRadius: 50,
+    borderRadius: 5,
   },
   redeembtn: {
     color: Constants.white,
@@ -612,9 +603,14 @@ const styles = StyleSheet.create({
   },
   amount: {
     color: Constants.custom_yellow,
-    fontSize: 24,
+    fontSize: 18,
     fontFamily: FONTS.Bold,
     alignSelf: 'flex-end',
+  },
+  amount2: {
+    color: Constants.custom_yellow,
+    fontSize: 14,
+    fontFamily: FONTS.Bold,
   },
   signInbtn: {
     height: 50,
@@ -624,8 +620,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
+    // marginBottom: 20,
     alignSelf: 'center',
+    position: 'absolute',
+    bottom: 20
   },
   buttontxt: {
     color: Constants.white,
@@ -724,6 +722,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     alignSelf: 'center',
   },
+  waigh: {
+      color: Constants.white,
+      fontSize: 12,
+      fontFamily: FONTS.SemiBold,
+    },
   shadowProp: {
     boxShadow: '0px 0px 8px 0.05px grey',
   },

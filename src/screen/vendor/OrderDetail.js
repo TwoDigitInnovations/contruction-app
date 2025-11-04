@@ -3,6 +3,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -59,7 +60,10 @@ const OrderDetail = (props) => {
             />
             <View>
               <Text style={styles.name}>{data?.user?.username}</Text>
-              <Text style={styles.redeembtn}>{moment(data?.createdAt).format('DD-MM-YYYY ')}</Text>
+              <View style={{flexDirection:'row',gap:7,alignItems:'center'}}>
+              <Text style={styles.redeembtn}>{moment(data?.sheduledate?data?.sheduledate:data?.createdAt).format('DD-MM-YYYY ')}</Text>
+              {data?.sheduledate&&<Text style={styles.amount2}>This is a schedule order</Text>}
+            </View>
             </View>
           </View>
           <View style={styles.secendpart}>
@@ -88,15 +92,20 @@ const OrderDetail = (props) => {
               style={{flexDirection: 'row', justifyContent: 'space-between'}}>
               <View style={{flexDirection: 'row'}}>
                 <Image
-                  source={require('../../Assets/Images/cement.png')}
-                  //   source={{uri: `${item.image}`}}
+                  source={
+                    data?.selectedAtribute?.image
+                      ? {
+                          uri: `${data?.selectedAtribute?.image}`,
+                        }
+                      : require('../../Assets/Images/cement.png')
+                  }
                   style={styles.hi2}
-                  // onPress={()=>navigate('Account')}
                 />
                 <View>
                   <Text style={[styles.name, {color: Constants.white}]}>
                     {data?.product?.name}
                   </Text>
+                  {data?.inputvalue&&<Text style={styles.waigh}>{data?.selectedAtribute?.name}</Text>}
                 </View>
               </View>
              {selectprod? <CheckboxactiveIcon
@@ -112,22 +121,26 @@ const OrderDetail = (props) => {
                 onPress={()=>setselectprod(true)}
               />}
             </View>
-            <View style={styles.txtcol}>
-              <View style={{}}>
-                {/* <View style={[styles.secendpart, {marginVertical: 20}]}>
-                  <Text
-                    style={[styles.secendboldtxt, {color: Constants.white}]}>
-                    QTY :
-                  </Text>
-                  <Text style={[styles.secendtxt, {color: Constants.white}]}>
-                    2
-                  </Text>
-                </View> */}
-              </View>
+            <View style={[styles.txtcol,{marginVertical:5,alignItems:'center'}]}>
+               {data?.inputvalue&&<Text style={styles.waigh}> {data?.inputvalue} {data?.selectedAtribute?.unit}</Text>}
               <Text style={styles.amount}>{Currency} {data?.product?.price}</Text>
             </View>
           </View>
         </TouchableOpacity>
+        <View style={[styles.inputbox, styles.shadowProp, { height: 110 }]}>
+                    <TextInput
+                      style={[
+                        styles.txtinp,
+                        styles.shadowProp3,
+                        { textAlignVertical: 'top' },
+                      ]}
+                      multiline={true}
+                      numberOfLines={4}
+                      editable={false}
+                      placeholder="Description"
+                      value={data?.description}
+                    ></TextInput>
+                  </View>
       </ScrollView>
         <Text style={[styles.donebtn,{backgroundColor:selectprod?Constants.custom_yellow:'#473c26'}]} onPress={()=>Packedordervendor(data._id)}>Done</Text>
     </View>
@@ -257,5 +270,41 @@ const styles = StyleSheet.create({
     alignSelf:'center',
     position:'absolute',
     bottom:30
-  }
+  },
+  amount2: {
+    color: Constants.custom_yellow,
+    fontSize: 14,
+    fontFamily: FONTS.Bold,
+  },
+  waigh: {
+      color: Constants.white,
+      fontSize: 14,
+      fontFamily: FONTS.SemiBold,
+    },
+    shadowProp3: {
+    boxShadow: 'inset 0px 0px 8px 5px #cdcdcd',
+  },
+  txtinp: {
+    fontSize: 16,
+    color: Constants.black,
+    fontFamily: FONTS.Medium,
+    backgroundColor: 'red',
+    flex: 1,
+    borderRadius: 15,
+    backgroundColor: Constants.white,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+  },
+  inputbox: {
+    backgroundColor: '#cdcdcd',
+    borderRadius: 15,
+    marginVertical: 10,
+    width: '100%',
+    alignSelf: 'center',
+    padding: 7,
+    height: 70,
+  },
 });

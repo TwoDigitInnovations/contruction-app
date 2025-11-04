@@ -79,7 +79,7 @@ const Products = () => {
       async res => {
         setLoading(false);
         console.log(res);
-        setproductlist(res?.data);
+        setproductlist(res?.data?.product);
       },
       err => {
         setLoading(false);

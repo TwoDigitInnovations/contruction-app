@@ -130,9 +130,12 @@ const Work = () => {
                       />
                       <View>
                         <Text style={styles.name}>{item?.user?.username}</Text>
+                        <View style={{flexDirection:'row',gap:7,alignItems:'center'}}>
                         <Text style={styles.redeembtn}>
-                          {moment(item?.createdAt).format('DD-MM-YYYY ')}
-                        </Text>
+                          {moment(item?.sheduledate?item?.sheduledate:item?.createdAt).format('DD-MM-YYYY ')}   
+                          </Text>
+                          {item?.sheduledate&&<Text style={styles.amount2}>This is a schedule order</Text>}
+                        </View>
                       </View>
                     </View>
                     <TouchableOpacity
@@ -147,19 +150,17 @@ const Work = () => {
                     <Text style={styles.secendboldtxt}>Location : </Text>
                     <Text style={styles.secendtxt2}>{item?.user?.address}</Text>
                   </View>
+                   <View style={styles.secendpart}>
+                                        <Text style={styles.secendboldtxt}>Product : </Text>
+                                        <Text style={styles.secendtxt}>{item?.product?.name}</Text>
+                                      </View>
+                  
+                                                        <View style={styles.secendpart}>
+                                        <Text style={styles.secendboldtxt}>{item?.inputvalue?"Qty":"Category"} : </Text>
+                                        <Text style={styles.secendtxt}> {item?.inputvalue?`${item?.inputvalue} ${item?.selectedAtribute?.unit}`:item?.product?.categoryname}</Text>
+                                    </View>
 
                   <View style={styles.txtcol}>
-                    <View style={{}}>
-                      <View style={styles.secendpart}>
-                        <Text style={styles.secendboldtxt}>Category : </Text>
-                        <Text style={styles.secendtxt}>
-                          {item?.product?.categoryname}
-                        </Text>
-                      </View>
-                      {/* <View style={styles.secendpart}>
-                    <Text style={styles.secendboldtxt}>QTY : </Text>
-                    <Text style={styles.secendtxt}>12</Text>
-                  </View> */}
                       <View style={styles.statuscov}>
                         {item?.status === 'Driverassigned' ? (
                           <Text style={styles.status}>Driver Assigned</Text>
@@ -168,7 +169,6 @@ const Work = () => {
                         )}
                         <Text style={styles.amount}>{Currency} {item?.price}</Text>
                       </View>
-                    </View>
                   </View>
                 </TouchableOpacity>
 
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
     // flex: 1,
     // justifyContent: 'space-between',
     marginLeft: 10,
-    marginVertical: 5,
+    marginTop: 5,
   },
   secendboldtxt: {
     color: Constants.black,
@@ -371,6 +371,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: FONTS.Bold,
     // alignSelf: 'flex-end',
+  },
+  amount2: {
+    color: Constants.custom_yellow,
+    fontSize: 14,
+    fontFamily: FONTS.Bold,
   },
   status: {
     color: Constants.custom_yellow,

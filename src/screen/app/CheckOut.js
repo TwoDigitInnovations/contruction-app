@@ -87,18 +87,26 @@ const getSetting = () => {
   };
 const totalsum =Number(selectedProductData?.selectedAtribute?.price)*Number(selectedProductData?.inputvalue)
   const submit = () => {
+    setLoading(true)
     const data = {
       price: ( totalsum +((totalsum * Number(settingDate?.TaxRate)) / 100) +(distance * Number(settingDate?.RatePerKM)) ).toFixed(0),
       product: productdetail?._id,
       productname: productdetail?.name,
       vendor:productdetail.posted_by?._id,
-      location:user?.shipping_address?.location
+      location:user?.shipping_address?.location,
+      address:user?.shipping_address?.address,
     };
-    if (productdetail.description&&productdetail.description!='') {
-      data.description = productdetail.description;
+    if (selectedProductData.inputvalue) {
+      data.inputvalue = selectedProductData.inputvalue;
     }
-    if (productdetail.sheduledate) {
-      data.sheduledate = productdetail.sheduledate;
+    if (selectedProductData?.selectedAtribute?.name) {
+      data.selectedAtribute = selectedProductData?.selectedAtribute;
+    }
+    if (selectedProductData.description&&selectedProductData.description!='') {
+      data.description = selectedProductData.description;
+    }
+    if (selectedProductData.sheduledate) {
+      data.sheduledate = selectedProductData.sheduledate;
     }
     console.log('data', data);
 
@@ -119,7 +127,7 @@ const totalsum =Number(selectedProductData?.selectedAtribute?.price)*Number(sele
   return (
     <View style={styles.container}>
       <Header item={'Check Out'} />
-      
+      <View style={{padding:20}}>
             <Text>
               <Text style={styles.secendboldtxt}>Product Name : </Text>
               <Text style={styles.secendtxt}>
@@ -140,7 +148,7 @@ const totalsum =Number(selectedProductData?.selectedAtribute?.price)*Number(sele
                           source={{ uri: selectedProductData?.selectedAtribute?.image }}
                           style={{ height: 100, width: 100, borderRadius: 10 }}
                         />
-                        <View style={{width:'50%'}}>
+                        <View style={{width:'45%'}}>
                         <Text style={styles.txt}>{selectedProductData?.selectedAtribute?.name}</Text>
                         <Text style={styles.txt3}>{selectedProductData?.inputvalue} {selectedProductData?.selectedAtribute?.unit}</Text>
                       </View>
@@ -194,6 +202,7 @@ const totalsum =Number(selectedProductData?.selectedAtribute?.price)*Number(sele
                 </Text>
               </View>
             </View>
+        </View>
             <TouchableOpacity
           style={[
             styles.button,
@@ -206,10 +215,6 @@ const totalsum =Number(selectedProductData?.selectedAtribute?.price)*Number(sele
         animationType="none"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(false);
-          navigate('App');
-        }}
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
@@ -246,7 +251,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Constants.custom_black,
-    padding:20
+    // padding:20
   },
   rowbetw2: {
     flexDirection: 'row',

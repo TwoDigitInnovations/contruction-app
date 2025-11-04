@@ -73,9 +73,10 @@ import {
               />
               <View>
                 <Text style={styles.name}>{orderdata?.user?.username}</Text>
-                <Text style={styles.redeembtn}>
-                  {moment(orderdata?.createdAt).format('DD-MM-YYYY ')}
-                </Text>
+                 <View style={{flexDirection:'row',gap:7,alignItems:'center'}}>
+                              <Text style={styles.redeembtn}>{moment(orderdata?.sheduledate?orderdata?.sheduledate:orderdata?.createdAt).format('DD-MM-YYYY ')}</Text>
+                              {orderdata?.sheduledate&&<Text style={styles.amount2}>This is a schedule order</Text>}
+                            </View>
               </View>
             </View>
           </View>
@@ -126,63 +127,44 @@ import {
                 <Text style={styles.name}>{orderdata?.vendor?.username}</Text>
               </View>
             </View>
-            {/* <Text style={styles.deliveredbtn}>{orderdata?.status}</Text> */}
           </View>
           <View style={styles.secendpart}>
             <Text style={styles.secendboldtxt}>Location : </Text>
             <Text style={styles.secendtxt2}>{orderdata?.vendor?.shop_address}</Text>
           </View>
           <View style={styles.txtcol}>
-            {/* <View style={{}}>
-              <View style={styles.secendpart}>
-                <Text style={styles.secendboldtxt}>Category : </Text>
-                <Text style={styles.secendtxt}>
-                  {orderdata?.product?.categoryname}
-                </Text>
-              </View>
-            </View> */}
             <View style={{alignItems:'flex-end',width:'100%'}}>
             <Text style={styles.amount}>{Currency} {orderdata?.price}</Text>
             </View>
           </View>
         </View>
-        <TouchableOpacity style={[styles.box2, styles.shadowProp]}>
+        <View style={[styles.box2, styles.shadowProp]}>
           <View style={[styles.inrshabox, styles.shadowProp2]}>
             <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
               <View style={{flexDirection: 'row'}}>
                 <Image
-                  source={require('../../Assets/Images/cement.png')}
-                  // source={
-                  //   userDetail?.img
-                  //     ? {
-                  //         uri: `${userDetail.img}`,
-                  //       }
-                  //     : require('../../Assets/Images/profile.png')
-                  // }
+                  source={
+                    orderdata?.selectedAtribute?.image
+                      ? {
+                          uri: `${orderdata?.selectedAtribute?.image}`,
+                        }
+                      : require('../../Assets/Images/cement.png')
+                  }
                   style={styles.hi2}
-                  // onPress={()=>navigate('Account')}
                 />
+                <View>
                 <Text style={styles.name2}>{orderdata?.product?.name}</Text>
+                {orderdata?.inputvalue&&<Text style={styles.waigh}>{orderdata?.selectedAtribute?.name}</Text>}
+              </View>
               </View>
               <TickIcon style={{}} />
             </View>
-            <View style={[styles.txtcol, {marginVertical: 10}]}>
-              {/* <View style={styles.secendpart}>
-                <Text
-                  style={[
-                    styles.secendboldtxt,
-                    {color: Constants.custom_yellow},
-                  ]}>
-                  QTY :{' '}
-                </Text>
-                <Text style={[styles.secendtxt, {color: Constants.white}]}>
-                  12
-                </Text>
-              </View> */}
+            <View style={[styles.txtcol, {marginVertical: 10,alignItems:'center'}]}>
+              {orderdata?.inputvalue&&<Text style={styles.waigh}> {orderdata?.inputvalue} {orderdata?.selectedAtribute?.unit}</Text>}
               <Text style={styles.amount}>{Currency} {orderdata?.product?.price}</Text>
             </View>
           </View>
-        </TouchableOpacity>
+        </View>
       </View>
     );
   };
@@ -222,16 +204,10 @@ import {
       marginVertical: 7,
       borderRadius: 8,
     },
-    deliveredbtn: {
+    waigh: {
       color: Constants.white,
-      fontSize: 16,
-      fontFamily: FONTS.Medium,
-      backgroundColor: '#17AD53',
-      paddingHorizontal: 10,
-      paddingVertical: 5,
-      // marginVertical: 7,
-      height: 35,
-      borderRadius: 8,
+      fontSize: 14,
+      fontFamily: FONTS.SemiBold,
     },
     name: {
       color: Constants.black,
@@ -241,7 +217,7 @@ import {
     name2: {
       color: Constants.white,
       fontFamily: FONTS.SemiBold,
-      fontSize: 14,
+      fontSize: 16,
       alignSelf: 'center',
     },
     secendpart: {
@@ -279,6 +255,11 @@ import {
       fontFamily: FONTS.Bold,
       alignSelf: 'flex-end',
     },
+    amount2: {
+    color: Constants.custom_yellow,
+    fontSize: 14,
+    fontFamily: FONTS.Bold,
+  },
     box2: {
       backgroundColor: Constants.custom_black,
       borderRadius: 15,
