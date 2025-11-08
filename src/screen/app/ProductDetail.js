@@ -1,4 +1,5 @@
 import {
+  Image,
   ImageBackground,
   StyleSheet,
   Text,
@@ -74,11 +75,10 @@ const ProductDetail = props => {
               item.value && (
                 <View style={{}} key={index}>
                   <TouchableOpacity
-                    style={styles.selectatribute}
+                    style={[styles.selectatribute,{borderColor:selectedAtribute?.name === item?.name ?Constants.custom_yellow:Constants.customgrey2,borderWidth:selectedAtribute?.name === item?.name ?1.5:1,}]}
                     onPress={() => setselectedAtribute(item)}
                   >
-                    <View style={{ flexDirection: 'row', gap: 15 }}>
-                      {selectedAtribute?.name === item?.name ? (
+                      {/* {selectedAtribute?.name === item?.name ? (
                         <CheckboxactiveIcon
                           height={25}
                           width={25}
@@ -90,12 +90,17 @@ const ProductDetail = props => {
                           width={25}
                           color={Constants.custom_yellow}
                         />
-                      )}
-                      <Text style={styles.txt}>{item.name}</Text>
-                    </View>
-                    <Text style={styles.txt2}>
-                      {Currency} {item.price}
-                    </Text>
+                      )} */}
+                      <Image
+                        source={{ uri: item?.image }}
+                        style={{height:60, width: 60, borderRadius: 5 }}
+                      />
+                      <View style={{width:'80%'}}>
+                        <Text style={styles.txt}>{item.name}</Text>
+                      <Text style={styles.txt2}>
+                        {Currency} {item.price}
+                      </Text>
+                      </View>
                   </TouchableOpacity>
                 </View>
               ),
@@ -106,7 +111,7 @@ const ProductDetail = props => {
               <TextInput
                 style={[styles.inrshabox, styles.shadowProp2]}
                 value={inputvalue}
-                keyboardType='number-pad'
+                keyboardType="number-pad"
                 onChangeText={setinputvalue}
               />
             </View>
@@ -280,9 +285,12 @@ const styles = StyleSheet.create({
   selectatribute: {
     flexDirection: 'row',
     marginHorizontal: 15,
-    justifyContent: 'space-between',
-    alignItems: 'center',
     marginTop: 15,
+    borderColor:Constants.customgrey2,
+    padding:7,
+    borderRadius:10,
+    gap:15,
+    alignItems:'center'
   },
   inputcov: {
     flexDirection: 'row',

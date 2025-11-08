@@ -38,6 +38,7 @@ import {
   AddressContext,
   LoadContext,
   LocationContext,
+  ProjectctContext,
   ToastContext,
   UserContext,
 } from '../../../App';
@@ -49,6 +50,7 @@ const Project = () => {
   const [loading, setLoading] = useContext(LoadContext);
   const [currentLocation, setcurrentLocation] = useContext(LocationContext);
   const [locationadd, setlocationadd] = useContext(AddressContext);
+  const [project, setproject] = useContext(ProjectctContext);
   const [user, setuser] = useContext(UserContext);
   const [jobtype, setjobtype] = useState('New');
   const [modalVisible, setModalVisible] = useState(false);
@@ -433,7 +435,7 @@ const Project = () => {
             renderItem={({ item }) => (
               <TouchableOpacity
                 style={[styles.inputbox2, styles.shadowProp]}
-                onPress={() => navigate('App')}
+                onPress={() => {setproject(item?._id),navigate('App')}}
               >
                 <View style={[styles.inrshabox, styles.shadowProp2]}>
                   <Image

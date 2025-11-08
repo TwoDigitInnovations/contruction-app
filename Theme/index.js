@@ -34,3 +34,4 @@ export { default as UploadIcon } from '../src/Assets/Icon/upload.svg';
 export { default as ProfileIcon } from '../src/Assets/Icon/profile.svg';
 export { default as PlusIcon } from '../src/Assets/Icon/plus.svg';
 export { default as DeliveryIcon } from '../src/Assets/Icon/delivery.svg';
+export { default as StarIcon } from '../src/Assets/Icon/star.svg';

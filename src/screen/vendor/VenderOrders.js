@@ -76,7 +76,7 @@ const VenderOrders = props => {
               <Text style={styles.name}>{orderdata?.user?.username}</Text>
               <View style={{flexDirection:'row',gap:7,alignItems:'center'}}>
               <Text style={styles.redeembtn}>{moment(orderdata?.sheduledate?orderdata?.sheduledate:orderdata?.createdAt).format('DD-MM-YYYY ')}</Text>
-              {orderdata?.sheduledate&&<Text style={styles.amount2}>This is a schedule order</Text>}
+              {orderdata?.sheduledate&&<Text style={styles.amount2}>{orderdata?.selectedSlot}</Text>}
             </View>
             </View>
           </View>
@@ -352,5 +352,6 @@ const styles = StyleSheet.create({
     color: Constants.custom_yellow,
     fontSize: 14,
     fontFamily: FONTS.Bold,
+    textDecorationLine:'underline'
   },
 });

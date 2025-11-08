@@ -221,7 +221,7 @@ const Products = () => {
           {!showform &&<TouchableOpacity style={styles.plsbuncov} onPress={() => {
                 setselectedcat(null),
                   setname(''),
-                  setprice(true),
+                  setprice(''),
                   setSelectId(null),
                   setshowform(true);
               }}>

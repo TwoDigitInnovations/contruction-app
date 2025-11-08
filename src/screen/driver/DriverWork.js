@@ -179,7 +179,7 @@ import moment from 'moment';
                       <Text style={styles.name}>{item?.user?.username}</Text>
                        <View style={{flexDirection:'row',gap:7,alignItems:'center'}}>
                       <Text style={styles.redeembtn}>{moment(item?.sheduledate?item?.sheduledate:item?.createdAt).format('DD-MM-YYYY ')}</Text>
-                    {item?.sheduledate&&<Text style={styles.amount2}>This is a schedule order</Text>}
+                    {item?.sheduledate&&<Text style={styles.amount2}>{item?.selectedSlot}</Text>}
                     </View>
                     </View>
                   </View>
@@ -401,6 +401,7 @@ import moment from 'moment';
     color: Constants.custom_yellow,
     fontSize: 14,
     fontFamily: FONTS.Bold,
+    textDecorationLine:'underline'
   },
   
     ///////Pop up model////

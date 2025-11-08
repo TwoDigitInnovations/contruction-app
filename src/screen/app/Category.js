@@ -1,6 +1,7 @@
 import {
   Animated,
   Easing,
+  FlatList,
   Image,
   ImageBackground,
   KeyboardAvoidingView,
@@ -20,20 +21,14 @@ import React, {
   useState,
 } from 'react';
 import Constants, { FONTS, Googlekey } from '../../Assets/Helpers/constant';
-import Header from '../../Assets/Component/Header';
-import { BackIcon, LocationEditIcon, LocationIcon } from '../../../Theme';
+import { BackIcon, CrossIcon, LocationEditIcon } from '../../../Theme';
 import MapView, {
   Marker,
-  Polygon,
-  Polyline,
   PROVIDER_GOOGLE,
 } from 'react-native-maps';
 import { goBack, navigate } from '../../../navigationRef';
-import CuurentLocation from '../../Assets/Component/CuurentLocation';
 import MapViewDirections from 'react-native-maps-directions';
-import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
-import GetCurrentAddressByLatLong from '../../Assets/Component/GetCurrentAddressByLatLong';
 import {
   AddressContext,
   LoadContext,
@@ -43,15 +38,16 @@ import {
 } from '../../../App';
 import { GetApi } from '../../Assets/Helpers/Service';
 import { useIsFocused } from '@react-navigation/native';
+import ActionSheet from 'react-native-actions-sheet';
 
 const Category = props => {
   const mapRef = useRef(null);
   const [routeCoordinates, setRouteCoordinates] = useState([]);
   const animatedValue = new Animated.Value(0);
-  const [open, setOpen] = useState(false);
-  const [sheddate, setsheddate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(moment());
+  const [scheduleDate, setScheduleDate] = useState(null);
+  const [selectedSlot, setSelectedSlot] = useState(null);
   const [productdetail, setproductdetail] = useState();
-  const [extradate, setextradate] = useState(null);
   const [description, setdescription] = useState('');
   const [loading, setLoading] = useContext(LoadContext);
   const [currentLocation, setcurrentLocation] = useContext(LocationContext);
@@ -61,6 +57,7 @@ const Category = props => {
   const [user, setuser] = useContext(UserContext);
   const [selectedProductData, setselectedProductData] =
     useContext(ProductContext);
+    const timeRef = useRef();
   const [rendermap, setrendermap] = useState(false);
   const IsFocused = useIsFocused();
   useEffect(() => {
@@ -105,6 +102,20 @@ const Category = props => {
       },
     );
   };
+
+  // Generate next 7 dates
+  const dates = Array.from({ length: 7 }, (_, i) => moment().add(i, "days"));
+  const times=[
+  "8:00 AM - 9:00 AM",
+  "9:00 AM - 10:00 AM",
+  "10:00 AM - 11:00 AM",
+  "11:00 AM - 12:00 PM",
+  "12:00 PM - 1:00 PM",
+  "1:00 PM - 2:00 PM",
+  "2:00 PM - 3:00 PM",
+  "3:00 PM - 4:00 PM",
+  "4:00 PM - 5:00 PM"
+]
 
   useEffect(() => {
     if (routeCoordinates.length > 0) {
@@ -249,32 +260,10 @@ const Category = props => {
             ></TextInput>
           </View>
 
-          <DatePicker
-            // style={{zIndex: '50'}}
-            modal
-            open={open}
-            minimumDate={new Date()}
-            mode="date"
-            theme="dark"
-            // maximumDate={maxDate}
-            // androidVariant="nativeAndroid"
-            date={sheddate}
-            onConfirm={date => {
-              setOpen(false);
-              setsheddate(date);
-              setextradate(date);
-              // console.log(date.toString())
-            }}
-            onCancel={() => {
-              setOpen(false);
-            }}
-          />
-
-          <View style={styles.flr}>
-            <View style={styles.flr2}>
+          <TouchableOpacity style={styles.flr} TouchableOpacity onPress={() =>{scheduleDate?setScheduleDate(null):timeRef?.current.show()}}>
               <Text style={styles.shdtxt}>Schedule Delievery</Text>
-              <TouchableOpacity onPress={() =>{extradate?setextradate(null):setOpen(true)}}>
-                {extradate ? (
+              <View>
+                {scheduleDate ? (
                   <Image
                     source={require('../../Assets/Images/on.png')}
                     style={styles.onoffbtn}
@@ -285,14 +274,13 @@ const Category = props => {
                     style={styles.onoffbtn}
                   />
                 )}
-              </TouchableOpacity>
-            </View>
-            {extradate && (
-              <Text style={[styles.shdtxt,{color:Constants.custom_yellow}]} onPress={() => setOpen(true)}>
-                {moment(sheddate).format('DD/MM/YYYY ')}
+              </View>
+          </TouchableOpacity>
+            {scheduleDate && (
+              <Text style={styles.shdtxt2} onPress={() => timeRef?.current.show()}>
+                {moment(scheduleDate).format('DD/MM/YYYY ')} {selectedSlot}
               </Text>
             )}
-          </View>
           <TouchableOpacity
             style={[styles.button, styles.shadowProp]}
             onPress={() => {
@@ -301,7 +289,8 @@ const Category = props => {
                 setselectedProductData({
                   ...selectedProductData,
                   description: description,
-                  sheduledate: extradate,
+                  sheduledate: selectedDate,
+                  selectedSlot
                 });
               } else {
                 navigate('Shipping');
@@ -312,6 +301,99 @@ const Category = props => {
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
+      <ActionSheet
+        ref={timeRef}
+        closeOnTouchBackdrop={true}
+        containerStyle={{ backgroundColor: Constants.white }}
+      >
+        <View
+          style={styles.txtcov}
+        >
+          <Text style={styles.sheetheadtxt}>
+            Choose Delivery Date
+          </Text>
+          <CrossIcon
+            style={styles.popupcross}
+            height={26}
+            width={26}
+            onPress={() => {timeRef.current.hide()}}
+          />
+        </View>
+
+      <FlatList
+        horizontal
+        data={dates}
+        renderItem={({ item,index }) => (
+          <TouchableOpacity
+            style={[
+              styles.dateItem,
+              {marginLeft:index===0?15:0},
+              selectedDate.isSame(item, "day") && styles.selectedDate,
+            ]}
+            onPress={() => setSelectedDate(item)}
+          >
+            <Text
+              style={[
+                styles.dateText,
+                selectedDate.isSame(item, "day") && styles.selectedDateText,
+              ]}
+            >
+              {item.format("ddd")}
+            </Text>
+            <Text
+              style={[
+                styles.dateText,
+                selectedDate.isSame(item, "day") && styles.selectedDateText,
+              ]}
+            >
+              {item.format("DD")}
+            </Text>
+          </TouchableOpacity>
+        )}
+        showsHorizontalScrollIndicator={false}
+        style={{ marginBottom: 20 }}
+      />
+
+        <View style={styles.horline}></View>
+        <Text style={[styles.sheetheadtxt,{marginLeft:10}]}>
+            Choose Delivery Slot
+          </Text>
+      <FlatList
+        data={times}
+        numColumns={2}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={[
+              styles.slot,
+              selectedSlot === item && styles.selectedSlot,
+            ]}
+            onPress={() => setSelectedSlot(item)}
+          >
+            <Text
+              style={[
+                styles.slotText,
+                selectedSlot === item && styles.selectedSlotText,
+              ]}
+            >
+              {item}
+            </Text>
+          </TouchableOpacity>
+        )}
+        showsVerticalScrollIndicator={false}
+      />
+
+
+        <TouchableOpacity
+          style={[styles.button, styles.shadowProp,{
+              backgroundColor:!scheduleDate&&!selectedSlot? '#baa172': Constants.custom_yellow,}]}
+          onPress={() => {setScheduleDate(selectedDate),timeRef.current.hide()}}
+          disabled={!scheduleDate&&!selectedSlot}
+        >
+          <Text style={styles.buttontxt}>
+            Set Date and Time-slot
+          </Text>
+        </TouchableOpacity>
+      </ActionSheet>
     </View>
   );
 };
@@ -396,6 +478,12 @@ const styles = StyleSheet.create({
     color: Constants.white,
     fontFamily: FONTS.SemiBold,
   },
+  shdtxt2: {
+    fontSize: 16,
+    color: Constants.custom_yellow,
+    fontFamily: FONTS.SemiBold,
+    marginHorizontal:20
+  },
   button: {
     backgroundColor: Constants.custom_yellow,
     height: 50,
@@ -439,9 +527,68 @@ const styles = StyleSheet.create({
     paddingHorizontal:20,
     marginTop:10
   },
-  flr2: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap:5
+
+//////schedule sheet style
+  dateItem: {
+    backgroundColor: "#f1f1f1",
+    borderRadius: 12,
+    width: 70,
+    paddingVertical: 10,
+    marginRight: 10,
+    alignItems: "center",
   },
+  selectedDate: { backgroundColor: Constants.custom_yellow },
+  dateText: {
+    fontSize: 16,
+    color:Constants.black,
+    fontFamily:FONTS.Medium,
+ },
+  selectedDateText: { 
+    fontSize: 16,
+    color:Constants.white,
+    fontFamily:FONTS.Medium,
+  },
+  slot: {
+    padding: 16,
+    marginVertical: 6,
+    borderRadius: 10,
+    backgroundColor: "#f7f7f7",
+    width:'45%',
+    marginLeft:10
+  },
+  selectedSlot: { backgroundColor: Constants.custom_yellow},
+  slotText: { 
+    textAlign: "center", 
+    fontSize: 14,
+    color:Constants.black,
+    fontFamily:FONTS.Medium },
+  selectedSlotText: { 
+    fontSize: 16,
+    color:Constants.white,
+    fontFamily:FONTS.Medium,
+  },
+  sheetheadtxt: { 
+    fontSize: 16,
+    color:Constants.black,
+    fontFamily:FONTS.SemiBold,
+  },
+  selectionBox: {
+    marginTop: 20,
+    padding: 12,
+    backgroundColor: "#E8F0FF",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  horline: {
+    borderTopWidth: 1,
+    borderColor: '#dedede',
+    marginBottom:10
+  },
+  txtcov:{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingVertical: 15,
+            paddingHorizontal: 10,
+          },
 });

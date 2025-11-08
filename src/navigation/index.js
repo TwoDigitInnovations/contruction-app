@@ -22,6 +22,7 @@ import { Vendortab } from './VenderTab';
 import VenderOrders from '../screen/vendor/VenderOrders';
 import { Drivertab } from './DriverTab';
 import ProductDetail from '../screen/app/ProductDetail';
+import RateReview from '../screen/app/RateReview';
 import CheckOut from '../screen/app/CheckOut';
 import OrderDetail from '../screen/vendor/OrderDetail';
 import Map from '../screen/driver/Map';
@@ -88,6 +89,7 @@ export default function Navigation(props) {
         <Stack.Screen name="DriverForm" component={DriverForm} />
         <Stack.Screen name="DriverAccount" component={DriverAccount} />
         <Stack.Screen name="DriverProfile" component={DriverProfile} />
+        <Stack.Screen name="RateReview" component={RateReview} />
         
    
       </Stack.Navigator>

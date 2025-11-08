@@ -134,7 +134,7 @@ const Work = () => {
                         <Text style={styles.redeembtn}>
                           {moment(item?.sheduledate?item?.sheduledate:item?.createdAt).format('DD-MM-YYYY ')}   
                           </Text>
-                          {item?.sheduledate&&<Text style={styles.amount2}>This is a schedule order</Text>}
+                          {item?.sheduledate&&<Text style={styles.amount2}>{item?.selectedSlot}</Text>}
                         </View>
                       </View>
                     </View>
@@ -376,6 +376,7 @@ const styles = StyleSheet.create({
     color: Constants.custom_yellow,
     fontSize: 14,
     fontFamily: FONTS.Bold,
+    textDecorationLine:'underline'
   },
   status: {
     color: Constants.custom_yellow,

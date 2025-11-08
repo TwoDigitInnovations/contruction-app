@@ -12,7 +12,7 @@ import {
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import Constants, {Currency, FONTS, Googlekey} from '../../Assets/Helpers/constant';
 import Header from '../../Assets/Component/Header';
-import {LocationIcon, TotalorderIcon} from '../../../Theme';
+import {LocationIcon, RightarrowIcon, StarIcon, TotalorderIcon} from '../../../Theme';
 import MapView, {
   Marker,
   Polygon,
@@ -266,7 +266,7 @@ useEffect(() => {
         </TouchableOpacity>
         <View
           style={[styles.inputbox2, styles.shadowProp3]}
-          onPress={() => navigate('Tracking')}>
+          >
           <View style={[styles.inrshabox2, styles.shadowProp4]}>
             <View style={{flexDirection: 'row', gap: 10}}>
               <TotalorderIcon
@@ -286,6 +286,25 @@ useEffect(() => {
             </View>
           </View>
         </View>
+        {<TouchableOpacity
+            onPress={()=>navigate('RateReview',orderData)}
+              style={styles.frow}>
+              <View style={styles.listcov}>
+                <StarIcon
+                  height={23}
+                  width={23}
+                  color={Constants.custom_yellow}
+                />
+                <Text style={styles.revtxt}>
+                  Rating and review
+                </Text>
+              </View>
+              <RightarrowIcon
+                color={Constants.black}
+                height={15}
+                width={15}
+              />
+            </TouchableOpacity>}
       </ScrollView>
     </View>
   );
@@ -419,4 +438,23 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: 'white',
   },
+  listcov: {
+    flexDirection: 'row',
+    // justifyContent:'space-between'
+    gap: 20,
+  },
+  frow:{
+    flexDirection: 'row', 
+    justifyContent: 'space-between',
+    marginBottom:50,
+    alignItems:'center',
+    marginHorizontal:20,
+    marginTop:10
+  },
+  revtxt:{
+    fontFamily: FONTS.Medium, 
+    fontSize: 14,
+    color:Constants.custom_yellow,
+    textDecorationLine:'underline'
+  }
 });

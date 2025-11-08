@@ -18,7 +18,7 @@ import {
   TotalorderIcon,
 } from '../../../Theme';
 import {navigate} from '../../../navigationRef';
-import { LoadContext, ToastContext } from '../../../App';
+import { LoadContext, ProjectctContext, ToastContext } from '../../../App';
 import { useIsFocused } from '@react-navigation/native';
 import { GetApi } from '../../Assets/Helpers/Service';
 import moment from 'moment';
@@ -27,6 +27,7 @@ const Orders = () => {
   const [orderlist ,setorderlist]=useState()
   const [toast, setToast] = useContext(ToastContext);
     const [loading, setLoading] = useContext(LoadContext);
+    const [project, setproject] = useContext(ProjectctContext);
     const [page, setPage] = useState(1);
     const [curentData, setCurrentData] = useState([]);
     const IsFocused = useIsFocused();
@@ -42,7 +43,7 @@ const Orders = () => {
   const getorders = (p) => {
     setPage(p);
     setLoading(true);
-    GetApi(`getrequestProductbyuser?page=${p}`).then(
+    GetApi(`getrequestProductbyuser?page=${p}&project=${project}`).then(
       async res => {
         setLoading(false);
        console.log(res)

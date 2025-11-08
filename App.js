@@ -32,6 +32,7 @@ export const LocationContext = React.createContext('');
 export const UserContext = React.createContext('');
 export const AddressContext = React.createContext('');
 export const ProductContext = React.createContext('');
+export const ProjectctContext = React.createContext('');
 
 const App = () => {
   const [initial, setInitial] = useState('');
@@ -45,12 +46,13 @@ const App = () => {
   const [selectedProductData, setselectedProductData] = useState({});
   const [currentLocation, setcurrentLocation] = useState(null);
   const [locationadd, setlocationadd] = useState('');
-  const APP_ID = '';
+  const [project, setproject] = useState('');
+  const APP_ID = '6748d85b-5696-492b-94ec-a0e58a3ebaaf';
 
-  // useEffect(() => {
-  //   OneSignal.initialize(APP_ID);
-  //   OneSignal.Notifications.requestPermission(true);
-  // }, [OneSignal]);
+  useEffect(() => {
+    OneSignal.initialize(APP_ID);
+    OneSignal.Notifications.requestPermission(true);
+  }, [OneSignal]);
 
   useEffect(() => {
     SplashScreen.hide();
@@ -223,6 +225,7 @@ useEffect(() => {
     <Context.Provider value={[initial, setInitial]}>
       <ToastContext.Provider value={[toast, setToast]}>
         <LoadContext.Provider value={[loading, setLoading]}>
+        <ProjectctContext.Provider value={[project, setproject]}>
           <LocationContext.Provider
             value={[currentLocation, setcurrentLocation]}
           >
@@ -243,6 +246,7 @@ useEffect(() => {
               </UserContext.Provider>
             </AddressContext.Provider>
           </LocationContext.Provider>
+          </ProjectctContext.Provider>
         </LoadContext.Provider>
       </ToastContext.Provider>
     </Context.Provider>

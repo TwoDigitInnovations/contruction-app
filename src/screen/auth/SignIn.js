@@ -19,6 +19,7 @@ import {Post} from '../../Assets/Helpers/Service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {LoadContext, ToastContext, UserContext} from '../../../App';
 import Constants from '../../Assets/Helpers/constant';
+import { OneSignal } from 'react-native-onesignal';
 
 const SignIn = props => {
   const [showPass, setShowPass] = useState(true);
@@ -35,13 +36,13 @@ const SignIn = props => {
       setSubmitted(true);
       return;
     }
-    // const player_id=await OneSignal.User.pushSubscription.getIdAsync()
-    // const device_token=await OneSignal.User.pushSubscription.getTokenAsync()
+    const player_id=await OneSignal.User.pushSubscription.getIdAsync()
+    const device_token=await OneSignal.User.pushSubscription.getTokenAsync()
     const data = {
       username: userDetail.username.trim(),
       password: userDetail.password,
-      // player_id,
-      // device_token
+      player_id,
+      device_token
     };
     console.log('data==========>', userDetail);
     setLoading(true);

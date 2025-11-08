@@ -98,7 +98,7 @@ const Project = () => {
             style={[
               styles.inputbox,
               styles.shadowProp,
-              {marginBottom: orderlist.length === index + 1 ? 100 : 10},
+              {marginBottom: (orderlist.length === index + 1&&orderlist.length % 2 !== 0) ? 100 : 10},
             ]}
             onPress={() => navigate('Stores',{item:item._id})}>
             <View style={[styles.inrshabox2, styles.shadowProp2]}>
