@@ -159,6 +159,10 @@ import moment from 'moment';
           renderItem={({item},i) =><View key={i}>
               <TouchableOpacity
                 style={styles.box}
+                onPress={() => navigate('Map', {
+              orderid: item._id,
+              type: item.status==='Collected'?'client':'shop',
+            })}
                 >
                 <View
                   style={{flexDirection: 'row', justifyContent: 'space-between'}}>
@@ -205,7 +209,7 @@ import moment from 'moment';
                       <Text style={styles.secendboldtxt}>{item?.inputvalue?"Qty":"Category"} : </Text>
                       <Text style={styles.secendtxt}> {item?.inputvalue?`${item?.inputvalue} ${item?.selectedAtribute?.unit}`:item?.product?.categoryname}</Text>
                   </View>
-                  <Text style={styles.amount}>{Currency} {item?.price}</Text>
+                  <Text style={styles.amount}>{Currency} {item?.deliveryfee}</Text>
                 </View>
                 <View style={styles.cancelAndLogoutButtonWrapStyle2}>
                   {/* <TouchableOpacity style={styles.cancelButtonStyle}>

@@ -3,6 +3,7 @@ import {
   Easing,
   Image,
   ImageBackground,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -12,7 +13,7 @@ import {
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import Constants, {Currency, FONTS, Googlekey} from '../../Assets/Helpers/constant';
 import Header from '../../Assets/Component/Header';
-import {LocationIcon, RightarrowIcon, StarIcon, TotalorderIcon} from '../../../Theme';
+import {InvoiceIcon, LocationIcon, RightarrowIcon, StarIcon, TotalorderIcon} from '../../../Theme';
 import MapView, {
   Marker,
   Polygon,
@@ -20,18 +21,20 @@ import MapView, {
   PROVIDER_GOOGLE,
 } from 'react-native-maps';
 import {navigate} from '../../../navigationRef';
-import { LoadContext } from '../../../App';
+import { LoadContext, ToastContext } from '../../../App';
 import { GetApi } from '../../Assets/Helpers/Service';
 import { mapStyle } from '../../Assets/Helpers/MapStyle';
 import { useIsFocused } from '@react-navigation/native';
 import MapViewDirections from 'react-native-maps-directions';
 import moment from 'moment';
+import RNBlobUtil from 'react-native-blob-util';
 
 const Tracking = (props) => {
   const orderid = props?.route?.params;
   const mapRef = useRef(null);
   const prevCoordsRef = useRef(null);
   const [loading, setLoading] = useContext(LoadContext);
+  const [toast, setToast] = useContext(ToastContext);
   const [bearing, setBearing] = useState(null);
   const [orderData, setOrderData] = useState();
   const IsFocused = useIsFocused();
@@ -155,6 +158,40 @@ useEffect(() => {
   let brng = toDeg(Math.atan2(y, x));
   return (brng + 360) % 360; // normalize 0–360
 };
+ const getinvoice = async () => {
+  setLoading(true)
+  const { DownloadDir, DocumentDir } = RNBlobUtil.fs.dirs;
+  const filePath = `${
+    Platform.OS === 'android' ? DownloadDir : DocumentDir
+  }/invoice-${Date.now()}.pdf`;
+
+  try {
+    const res = await RNBlobUtil.config({
+      fileCache: true,
+      path: filePath,
+      addAndroidDownloads: {
+        useDownloadManager: true,
+        notification: true,
+        path: filePath,
+        title: 'Invoice',
+        description: 'Downloading invoice...',
+        mime: 'application/pdf',
+        mediaScannable: true,
+      },
+    }).fetch(
+      'GET',
+      // `http://192.168.0.187:3000/v1/api/generateInvoice?orderId=${orderid}`
+      `https://api.bodmass.com/v1/api/generateInvoice?orderId=${orderid}`
+    );
+
+    console.log('Invoice downloaded:', res.path());
+    setLoading(false)
+    setToast('success',"Invoice downloaded successfully");
+    // if (Platform.OS === 'ios') Linking.openURL(`file://${res.path()}`);
+  } catch (err) {
+    console.error('Error downloading invoice:', err);
+  }
+};
   return (
     <View style={styles.container}>
       <View style={styles.headcov}>
@@ -277,7 +314,7 @@ useEffect(() => {
               <View style={{}}>
                 <Text style={[styles.txt2, {fontSize: 16}]}>{orderData?.productname}</Text>
                 <Text style={styles.txt2}>{moment(orderData?.sheduledate?orderData?.sheduledate:orderData?.createdAt).format('DD-MM-YYYY ')}</Text>
-                <Text style={styles.txt2}>{Currency} {orderData?.price}</Text>
+                <Text style={styles.txt2}>{Currency} {orderData?.total}</Text>
               </View>
             </View>
             <View style={{alignItems:'center',gap:3}}>
@@ -304,6 +341,16 @@ useEffect(() => {
                 height={15}
                 width={15}
               />
+            </TouchableOpacity>}
+            {<TouchableOpacity
+              style={styles.contactopt}
+              onPress={() =>
+                getinvoice()
+              }>
+              <InvoiceIcon color={Constants.custom_yellow} height={20} width={20} />
+              <Text style={styles.othrttxt2}>
+                Download Invoice
+              </Text>
             </TouchableOpacity>}
       </ScrollView>
     </View>
@@ -446,15 +493,33 @@ const styles = StyleSheet.create({
   frow:{
     flexDirection: 'row', 
     justifyContent: 'space-between',
-    marginBottom:50,
     alignItems:'center',
     marginHorizontal:20,
-    marginTop:10
+    marginTop:10,
   },
   revtxt:{
     fontFamily: FONTS.Medium, 
     fontSize: 14,
     color:Constants.custom_yellow,
     textDecorationLine:'underline'
-  }
+  },
+  othrttxt2: {
+    color: Constants.custom_yellow,
+    fontSize: 16,
+    fontFamily: FONTS.SemiBold,
+  },
+  contactopt: {
+    marginBottom:50,
+    borderWidth: 1.5,
+    borderColor: Constants.custom_yellow,
+    borderRadius: 10,
+    flexDirection: 'row',
+    height: 55,
+    width: '90%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    gap: 15,
+    marginVertical:10
+  },
 });

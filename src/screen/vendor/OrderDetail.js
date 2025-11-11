@@ -123,11 +123,11 @@ const OrderDetail = (props) => {
             </View>
             <View style={[styles.txtcol,{marginVertical:5,alignItems:'center'}]}>
                {data?.inputvalue&&<Text style={styles.waigh}> {data?.inputvalue} {data?.selectedAtribute?.unit}</Text>}
-              <Text style={styles.amount}>{Currency} {data?.product?.price}</Text>
+              <Text style={styles.amount}>{Currency} {data?.selectedAtribute?.price?data?.selectedAtribute?.price:data?.product?.price}</Text>
             </View>
           </View>
         </TouchableOpacity>
-        <View style={[styles.inputbox, styles.shadowProp, { height: 110 }]}>
+        {data?.description&&<View style={[styles.inputbox, styles.shadowProp, { height: 110 }]}>
                     <TextInput
                       style={[
                         styles.txtinp,
@@ -140,7 +140,7 @@ const OrderDetail = (props) => {
                       placeholder="Description"
                       value={data?.description}
                     ></TextInput>
-                  </View>
+                  </View>}
       </ScrollView>
         <Text style={[styles.donebtn,{backgroundColor:selectprod?Constants.custom_yellow:'#473c26'}]} onPress={()=>Packedordervendor(data._id)}>Done</Text>
     </View>

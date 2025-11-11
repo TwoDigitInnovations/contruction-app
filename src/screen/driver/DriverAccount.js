@@ -10,7 +10,7 @@ import {
   Linking,
 } from 'react-native';
 import React, {createRef, useContext, useEffect, useState} from 'react';
-import Constants, {FONTS} from '../../Assets/Helpers/constant';
+import Constants, {Currency, FONTS} from '../../Assets/Helpers/constant';
 import {
   AccountIcon,
   EditIcon,
@@ -18,6 +18,7 @@ import {
   LogoutIcon,
   PrivacyIcon,
   RightarrowIcon,
+  TransactionIcon,
 } from '../../../Theme';
 import {navigate, reset} from '../../../navigationRef';
 import Header from '../../Assets/Component/Header';
@@ -58,6 +59,7 @@ const InAppBrowserFunc=async(props)=>{
         style={{flex: 1}}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <TouchableOpacity style={[styles.procov]} onPress={()=>navigate('DriverProfile')}>
+            <View style={styles.toppart}>
             <View style={{flexDirection: 'row', gap: 15}}>
               <Image
                 source={
@@ -75,6 +77,14 @@ const InAppBrowserFunc=async(props)=>{
               </View>
             </View>
             <EditIcon style={{alignSelf:'center'}} color={Constants.white}/>
+            </View>
+            <View style={styles.toppart}>
+              <View>
+              <Text style={styles.headtxt2}>Available Balance</Text>
+        <Text style={styles.headtxt3}>{Currency}{user?.wallet?user?.wallet:0}</Text>
+        </View>
+        <Text style={styles.headtxt4} onPress={()=>navigate('DriverWithdraw')}>Withdraw</Text>
+            </View>
           </TouchableOpacity>
           {/* </View> */}
           {/* <View style={styles.verline}></View> */}
@@ -90,6 +100,27 @@ const InAppBrowserFunc=async(props)=>{
                   <Text style={[styles.protxt]}>Account</Text>
                   <Text style={[styles.protxt4]}>
                     Make changes to your account
+                  </Text>
+                </View>
+              </View>
+              <RightarrowIcon
+                color={Constants.customgrey}
+                height={20}
+                width={20}
+                style={{alignSelf: 'center'}}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.proopt}
+              onPress={() => navigate('DriverTransactionHistory')}>
+              <View style={styles.protxt3}>
+                <View style={styles.iconcov}>
+                  <TransactionIcon height={20} width={20} />
+                </View>
+                <View>
+                  <Text style={[styles.protxt]}>Transaction History</Text>
+                  <Text style={[styles.protxt4]}>
+                    Check your transaction history
                   </Text>
                 </View>
               </View>
@@ -329,15 +360,35 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   procov: {
-    flexDirection: 'row',
     marginTop: 25,
-    gap: 20,
     width: '90%',
     alignSelf: 'center',
     backgroundColor: Constants.custom_black,
     padding: 15,
     borderRadius: 7,
-    justifyContent: 'space-between',
+    gap: 10,
+  },
+  headtxt2: {
+    fontSize: 14,
+    color: Constants.customgrey2,
+    fontFamily: FONTS.Regular,
+  },
+  headtxt3: {
+    fontSize: 20,
+    color: Constants.white,
+    fontFamily: FONTS.SemiBold,
+  },
+  headtxt4: {
+    fontSize: 14,
+    color: Constants.white,
+    fontFamily: FONTS.Regular,
+    textAlign: 'center',
+    borderWidth: 1,
+    borderColor: Constants.white,
+    padding: 10,
+    width: '30%',
+    borderRadius: 15,
+    alignSelf: 'center',
   },
   verline: {
     height: 1,

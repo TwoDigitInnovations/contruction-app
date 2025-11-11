@@ -102,7 +102,7 @@ import {
                 ) : orderdata?.status === 'Delivered' ?(
                   <Text style={styles.status}>Delivered</Text>
                 ):<Text></Text>}
-                <Text style={styles.amount}>{Currency} {orderdata?.price}</Text>
+                <Text style={styles.amount}>{Currency} {orderdata?.deliveryfee}</Text>
               </View>
             </View>
           </View>
@@ -161,7 +161,7 @@ import {
             </View>
             <View style={[styles.txtcol, {marginVertical: 10,alignItems:'center'}]}>
               {orderdata?.inputvalue&&<Text style={styles.waigh}> {orderdata?.inputvalue} {orderdata?.selectedAtribute?.unit}</Text>}
-              <Text style={styles.amount}>{Currency} {orderdata?.product?.price}</Text>
+              <Text style={styles.amount}>{Currency} {orderdata?.selectedAtribute?.price?orderdata?.selectedAtribute?.price:orderdata?.product?.price}</Text>
             </View>
           </View>
         </View>

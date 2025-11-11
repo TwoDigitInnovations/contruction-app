@@ -30,6 +30,8 @@ import DriverOrder from '../screen/driver/DriverOrder';
 import DriverForm from '../screen/driver/DriverForm';
 import DriverAccount from '../screen/driver/DriverAccount';
 import DriverProfile from '../screen/driver/DriverProfile';
+import DriverWithdraw from '../screen/driver/Withdraw';
+import DriverTransactionHistory from '../screen/driver/TransactionHistory';
 import VendorForm from '../screen/vendor/VendorForm';
 import VendorAccount from '../screen/vendor/VendorAccount';
 import VendorProfile from '../screen/vendor/VendorProfile';
@@ -90,6 +92,8 @@ export default function Navigation(props) {
         <Stack.Screen name="DriverAccount" component={DriverAccount} />
         <Stack.Screen name="DriverProfile" component={DriverProfile} />
         <Stack.Screen name="RateReview" component={RateReview} />
+        <Stack.Screen name="DriverWithdraw" component={DriverWithdraw} />
+        <Stack.Screen name="DriverTransactionHistory" component={DriverTransactionHistory} />
         
    
       </Stack.Navigator>

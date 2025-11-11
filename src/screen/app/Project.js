@@ -165,7 +165,7 @@ const Project = () => {
   };
   return (
     <View style={styles.container}>
-      <Header />
+      {/* <Header /> */}
       <RadioButton.Group
         onValueChange={type => {
           setjobtype(type);

@@ -117,7 +117,8 @@ const getFormattedDeliveryTime = (baseMinutes, extraMinutes = 60) => {
     const submit = () => {
     setLoading(true);
     const data = {
-      price: (
+      price: totalsum,
+      total: (
         totalsum +
         (totalsum * Number(settingDate?.TaxRate)) / 100 +
         distance * Number(settingDate?.RatePerKM)
@@ -177,9 +178,9 @@ const getFormattedDeliveryTime = (baseMinutes, extraMinutes = 60) => {
             <Text style={styles.secendboldtxt}>Product Name : </Text>
             <Text style={styles.secendtxt}>{productdetail?.name}</Text>
           </Text>
-          <Text style={[styles.txt2]}>
+         {!selectedProductData?.selectedAtribute?.name && <Text style={[styles.txt2]}>
             {Currency} {productdetail?.price}
-          </Text>
+          </Text>}
         </View>
         {selectedProductData?.selectedAtribute?.name &&<View style={styles.selectatribute}>
           <View

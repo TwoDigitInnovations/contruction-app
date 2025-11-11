@@ -1,5 +1,5 @@
 // const prodUrl = 'http://192.168.0.187:3000/v1/api/';
-// const prodUrl = 'http://10.217.61.96:3000/v1/api/';
+// const prodUrl = 'http://10.217.61.207:3000/v1/api/';
 const prodUrl = 'https://api.bodmass.com/v1/api/';
 
 let apiUrl = prodUrl;

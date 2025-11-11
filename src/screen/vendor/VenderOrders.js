@@ -169,11 +169,11 @@ const VenderOrders = props => {
           </View>
           <View style={[styles.txtcol, {marginVertical: 10,alignItems:'center'}]}>
             {orderdata?.inputvalue&&<Text style={styles.waigh}> {orderdata?.inputvalue} {orderdata?.selectedAtribute?.unit}</Text>}
-            <Text style={styles.amount}>{Currency} {orderdata?.product?.price}</Text>
+            <Text style={styles.amount}>{Currency} {orderdata?.selectedAtribute?.price?orderdata?.selectedAtribute?.price:orderdata?.product?.price}</Text>
           </View>
         </View>
       </View>
-      <View style={[styles.inputbox, styles.shadowProp, { height: 110 }]}>
+      {orderdata?.description&&<View style={[styles.inputbox, styles.shadowProp, { height: 110 }]}>
             <TextInput
               style={[
                 styles.txtinp,
@@ -186,7 +186,7 @@ const VenderOrders = props => {
               placeholder="Description"
               value={orderdata?.description}
             ></TextInput>
-          </View>
+          </View>}
     </View>
   );
 };

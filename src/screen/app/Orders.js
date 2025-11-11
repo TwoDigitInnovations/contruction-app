@@ -93,7 +93,7 @@ const Orders = () => {
                       {item.productname}
                     </Text>
                     <Text style={styles.txt}>{moment(item?.sheduledate?item?.sheduledate:item?.createdAt).format('DD-MM-YYYY ')}</Text>
-                    <Text style={styles.txt}>{Currency} {item.price}</Text>
+                    <Text style={styles.txt}>{Currency} {item.total}</Text>
                   </View>
                 </View>
                 <View style={{alignItems:'center'}}>

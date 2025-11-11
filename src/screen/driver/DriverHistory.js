@@ -82,7 +82,7 @@ import Header from '../../Assets/Component/Header';
                   </View>
                   
                 </View>
-                <Text style={styles.amount}>{Currency} {item?.price}</Text>
+                <Text style={styles.amount}>{Currency} {item?.deliveryfee}</Text>
               </View>
               
             </TouchableOpacity>

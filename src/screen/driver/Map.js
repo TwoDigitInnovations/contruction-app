@@ -9,10 +9,11 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import MapView, {
   Marker,
   Polygon,
@@ -26,13 +27,26 @@ import {
   requestLocationAccuracy,
 } from 'react-native-permissions';
 import MapViewDirections from 'react-native-maps-directions';
-import Constants, {Currency, FONTS, Googlekey} from '../../Assets/Helpers/constant';
+import Constants, {
+  Currency,
+  FONTS,
+  Googlekey,
+} from '../../Assets/Helpers/constant';
 import moment from 'moment';
-import {goBack, navigate} from '../../../navigationRef';
-import {LoadContext, ToastContext} from '../../../App';
-import {GetApi, Post} from '../../Assets/Helpers/Service';
+import { goBack, navigate } from '../../../navigationRef';
+import { LoadContext, ToastContext } from '../../../App';
+import { GetApi, Post, PostWithImage } from '../../Assets/Helpers/Service';
 import Header from '../../Assets/Component/Header';
-import {TickIcon} from '../../../Theme';
+import {
+  Cross2Icon,
+  CrossIcon,
+  TickIcon,
+  Upload2Icon,
+  UploadIcon,
+} from '../../../Theme';
+import CameraGalleryPeacker from '../../Assets/Component/CameraGalleryPeacker';
+import Signature from 'react-native-signature-canvas';
+import ReactNativeBlobUtil from 'react-native-blob-util';
 // import CustomCurrentLocation from '../../Component/CustomCurrentLocation';
 
 const Map = props => {
@@ -42,6 +56,7 @@ const Map = props => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
   const [modalVisible4, setModalVisible4] = useState(false);
+  const [modalVisible6, setModalVisible6] = useState(false);
   const [toast, setToast] = useContext(ToastContext);
   const [loading, setLoading] = useContext(LoadContext);
   const [from, setFrom] = useState('');
@@ -51,7 +66,12 @@ const Map = props => {
   const [destinationadd, setdestinationadd] = useState(null);
   const [per, setper] = useState(null);
   const [orderdetail, setorderdetail] = useState();
+  const [cheakimg, setcheakimg] = useState('');
+  const [signimg, setSignimg] = useState();
+  const [images, setImages] = useState([]);
 
+  const cameraRef = useRef();
+  const signRef = useRef();
   const mapRef = useRef(null);
   const animatedValue = new Animated.Value(0);
   const [routeCoordinates, setRouteCoordinates] = useState([]);
@@ -78,7 +98,7 @@ const Map = props => {
                 console.log(error.code, error.message);
                 //   return error;
               },
-              {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+              { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
             );
           }
         });
@@ -102,7 +122,7 @@ const Map = props => {
               console.log(error.code, error.message);
               //   return error;
             },
-            {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
           );
         } else {
           console.log('location permission denied');
@@ -177,27 +197,6 @@ const Map = props => {
     );
   };
 
-  const deliverorder = id => {
-    const body = {
-      id: id,
-      status: 'Delivered',
-    };
-    setLoading(true);
-    Post(`changeorderstatus`, body).then(
-      async res => {
-        setLoading(false);
-        console.log(res);
-        if (res.status) {
-          MyOrders();
-        }
-      },
-      err => {
-        setLoading(false);
-        console.log(err);
-      },
-    );
-  };
-
 
   const Acceptorder = id => {
     setLoading(true);
@@ -219,7 +218,65 @@ const Map = props => {
       },
     );
   };
-  // console.log('locationadd', locationadd);
+  
+
+const base64ToBlobWithRNBU = async (base64Data, mimeType = 'image/png') => {
+   const dirs = ReactNativeBlobUtil.fs.dirs;
+  const tempPath = `${dirs.CacheDir}/temp_signature.${mimeType.split('/')[1]}`;
+
+  // Write Base64 data to file
+  await ReactNativeBlobUtil.fs.writeFile(tempPath, base64Data, 'base64');
+
+  // Return file path
+  return tempPath;
+};
+  
+  const handleSignature = async(signature) => {
+    if (images?.length===0) {
+      setToast('Please upload delivery image');
+      return;
+    }
+    if (images?.length>5) {
+      setToast('You can upload maximum 5 images');
+      return;
+    }
+    console.log(signature);
+    const base64Data = signature.split(',')[1]; // remove data:image/png;base64,
+  const filePath = await base64ToBlobWithRNBU(base64Data);
+
+  const formData = new FormData();
+  formData.append('signature', {
+    uri: `file://${filePath}`,
+    type: 'image/png',
+    name: 'signature.png',
+  });
+  images?.forEach((item, index) => {
+    formData.append(`deliveryimg`, item);});
+    formData.append('id', orderdetail?._id);
+    formData.append('status', 'Delivered');
+    console.log("formData",formData);
+    setLoading(true);
+    PostWithImage(`completeride`, formData).then(
+      async res => {
+        setLoading(false);
+        console.log(res);
+        if (res.status) {
+          setModalVisible6(false)
+          goBack();
+        }
+      },
+      err => {
+        setLoading(false);
+        console.log(err);
+      },
+    );
+  };
+
+
+  const handleClear = () => {
+    signRef.current.clearSignature();
+  };
+
   return (
     <View style={styles.container}>
       <Header item={'My Orders'} />
@@ -227,7 +284,7 @@ const Map = props => {
         source={require('../../Assets/Images/mapimg.png')}
         style={[styles.map, {width: '100%'}]}
       /> */}
-      <View style={{flex: 1}}>
+      <View style={{ flex: 1 }}>
         {location?.latitude && (
           <MapView
             ref={mapRef}
@@ -241,7 +298,8 @@ const Map = props => {
             //  }}
             initialRegion={location}
             region={location}
-            showsUserLocation={true}>
+            showsUserLocation={true}
+          >
             {destination?.latitude && (
               <Marker
                 coordinate={destination}
@@ -282,9 +340,9 @@ const Map = props => {
           </MapView>
         )}
       </View>
-      <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
+      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
         <View style={styles.box}>
-          <View style={{flexDirection: 'row'}}>
+          <View style={{ flexDirection: 'row' }}>
             <Image
               // source={require('../../Assets/Images/profile4.png')}
               source={
@@ -299,10 +357,22 @@ const Map = props => {
             />
             <View>
               <Text style={styles.name}>{orderdetail?.user?.username}</Text>
-              <View style={{flexDirection:'row',gap:7,alignItems:'center'}}>
-                                            <Text style={styles.redeembtn}>{moment(orderdetail?.sheduledate?orderdetail?.sheduledate:orderdetail?.createdAt).format('DD-MM-YYYY ')}</Text>
-                                            {orderdetail?.sheduledate&&<Text style={styles.amount2}>{orderdetail?.selectedSlot}</Text>}
-                                          </View>
+              <View
+                style={{ flexDirection: 'row', gap: 7, alignItems: 'center' }}
+              >
+                <Text style={styles.redeembtn}>
+                  {moment(
+                    orderdetail?.sheduledate
+                      ? orderdetail?.sheduledate
+                      : orderdetail?.createdAt,
+                  ).format('DD-MM-YYYY ')}
+                </Text>
+                {orderdetail?.sheduledate && (
+                  <Text style={styles.amount2}>
+                    {orderdetail?.selectedSlot}
+                  </Text>
+                )}
+              </View>
             </View>
           </View>
           <View style={styles.secendpart}>
@@ -324,14 +394,23 @@ const Map = props => {
                 </Text>
               </View>
             </View>
-            <Text style={styles.amount}>{Currency} {orderdetail?.price}</Text>
+            <Text style={styles.amount}>
+              {Currency} {orderdetail?.deliveryfee}
+            </Text>
           </View>
         </View>
-        <View style={[styles.box2, styles.shadowProp,{ marginBottom: orderdetail?.status != 'Delivered' ? 80 : 10 }]}>
+        <View
+          style={[
+            styles.box2,
+            styles.shadowProp,
+            { marginBottom: orderdetail?.status != 'Delivered' ? 80 : 10 },
+          ]}
+        >
           <View style={[styles.inrshabox, styles.shadowProp2]}>
             <View
-              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-              <View style={{flexDirection: 'row'}}>
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}
+            >
+              <View style={{ flexDirection: 'row' }}>
                 <Image
                   source={
                     orderdetail?.selectedAtribute?.image
@@ -343,40 +422,58 @@ const Map = props => {
                   style={styles.hi2}
                 />
                 <View>
-                <Text style={styles.name2}>{orderdetail?.product?.name}</Text>
-                {orderdetail?.inputvalue&&<Text style={styles.waigh}>{orderdetail?.selectedAtribute?.name}</Text>}
-              </View>
+                  <Text style={styles.name2}>{orderdetail?.product?.name}</Text>
+                  {orderdetail?.inputvalue && (
+                    <Text style={styles.waigh}>
+                      {orderdetail?.selectedAtribute?.name}
+                    </Text>
+                  )}
+                </View>
               </View>
               <TickIcon style={{}} />
             </View>
-            <View style={[styles.txtcol, {marginVertical: 10}]}>
-              {orderdetail?.inputvalue&&<Text style={styles.buttontxt}> {orderdetail?.inputvalue} {orderdetail?.selectedAtribute?.unit}</Text>}
-              <Text style={styles.amount}>{Currency} {orderdetail?.product?.price}</Text>
+            <View style={[styles.txtcol, { marginVertical: 10 }]}>
+              {orderdetail?.inputvalue && (
+                <Text style={styles.buttontxt}>
+                  {' '}
+                  {orderdetail?.inputvalue}{' '}
+                  {orderdetail?.selectedAtribute?.unit}
+                </Text>
+              )}
+              <Text style={styles.amount}>
+                {Currency}{' '}
+                {orderdetail?.selectedAtribute?.price
+                  ? orderdetail?.selectedAtribute?.price
+                  : orderdetail?.product?.price}
+              </Text>
             </View>
           </View>
         </View>
       </ScrollView>
-        {orderdetail?.status === 'Collected' && (
-          <TouchableOpacity
-            style={styles.signInbtn}
-            onPress={() => setModalVisible2(true)}>
-            <Text style={styles.buttontxt}>Finish Ride</Text>
-          </TouchableOpacity>
-        )}
-        {orderdetail?.status === 'Driverassigned' && orderdetail.driver && (
-          <TouchableOpacity
-            style={styles.signInbtn}
-            onPress={() => setModalVisible(true)}>
-            <Text style={styles.buttontxt}>Start Ride</Text>
-          </TouchableOpacity>
-        )}
-        {orderdetail?.status === 'Driverassigned' && !orderdetail.driver && (
-          <TouchableOpacity
-            style={styles.signInbtn}
-            onPress={() => setModalVisible4(true)}>
-            <Text style={styles.buttontxt}>Accept Ride</Text>
-          </TouchableOpacity>
-        )}
+      {orderdetail?.status === 'Collected' && (
+        <TouchableOpacity
+          style={styles.signInbtn}
+          onPress={() => setModalVisible6(true)}
+        >
+          <Text style={styles.buttontxt}>Finish Ride</Text>
+        </TouchableOpacity>
+      )}
+      {orderdetail?.status === 'Driverassigned' && orderdetail.driver && (
+        <TouchableOpacity
+          style={styles.signInbtn}
+          onPress={() => setModalVisible(true)}
+        >
+          <Text style={styles.buttontxt}>Start Ride</Text>
+        </TouchableOpacity>
+      )}
+      {orderdetail?.status === 'Driverassigned' && !orderdetail.driver && (
+        <TouchableOpacity
+          style={styles.signInbtn}
+          onPress={() => setModalVisible4(true)}
+        >
+          <Text style={styles.buttontxt}>Accept Ride</Text>
+        </TouchableOpacity>
+      )}
       <Modal
         animationType="none"
         transparent={true}
@@ -384,16 +481,18 @@ const Map = props => {
         onRequestClose={() => {
           // Alert.alert('Modal has been closed.');
           setModalVisible(!modalVisible);
-        }}>
+        }}
+      >
         <View style={styles.centeredView}>
-          <View style={styles.modalView}>
+          <View style={styles.modalView2}>
             <Text style={styles.alrt}>Alert !</Text>
             <View
               style={{
                 backgroundColor: 'white',
                 alignItems: 'center',
                 paddingHorizontal: 30,
-              }}>
+              }}
+            >
               <Text style={styles.textStyle}>
                 Are you sure you want to Start this ride !
               </Text>
@@ -401,12 +500,14 @@ const Map = props => {
                 <TouchableOpacity
                   activeOpacity={0.9}
                   onPress={() => setModalVisible(!modalVisible)}
-                  style={styles.cancelButtonStyle}>
+                  style={styles.cancelButtonStyle}
+                >
                   <Text
                     style={[
                       styles.modalText,
-                      {color: Constants.custom_yellow},
-                    ]}>
+                      { color: Constants.custom_yellow },
+                    ]}
+                  >
                     No
                   </Text>
                 </TouchableOpacity>
@@ -415,7 +516,8 @@ const Map = props => {
                   style={styles.logOutButtonStyle}
                   onPress={() => {
                     collectorder(orderdetail._id), setModalVisible(false);
-                  }}>
+                  }}
+                >
                   <Text style={styles.modalText}>Yes</Text>
                 </TouchableOpacity>
               </View>
@@ -423,7 +525,7 @@ const Map = props => {
           </View>
         </View>
       </Modal>
-      <Modal
+      {/* <Modal
         animationType="none"
         transparent={true}
         visible={modalVisible2}
@@ -468,7 +570,7 @@ const Map = props => {
             </View>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
 
       <Modal
         animationType="none"
@@ -477,16 +579,18 @@ const Map = props => {
         onRequestClose={() => {
           // Alert.alert('Modal has been closed.');
           setModalVisible4(!modalVisible4);
-        }}>
+        }}
+      >
         <View style={styles.centeredView}>
-          <View style={styles.modalView}>
+          <View style={styles.modalView2}>
             <Text style={styles.alrt}>Alert !</Text>
             <View
               style={{
                 backgroundColor: 'white',
                 alignItems: 'center',
                 paddingHorizontal: 30,
-              }}>
+              }}
+            >
               <Text style={styles.textStyle}>
                 Are you sure you want to Accept this ride to delivery !
               </Text>
@@ -494,12 +598,14 @@ const Map = props => {
                 <TouchableOpacity
                   activeOpacity={0.9}
                   onPress={() => setModalVisible4(!modalVisible4)}
-                  style={styles.cancelButtonStyle}>
+                  style={styles.cancelButtonStyle}
+                >
                   <Text
                     style={[
                       styles.modalText,
-                      {color: Constants.custom_yellow},
-                    ]}>
+                      { color: Constants.custom_yellow },
+                    ]}
+                  >
                     No
                   </Text>
                 </TouchableOpacity>
@@ -509,7 +615,8 @@ const Map = props => {
                   onPress={() => {
                     setModalVisible4(false);
                     Acceptorder(orderdetail._id);
-                  }}>
+                  }}
+                >
                   <Text style={styles.modalText}>Yes</Text>
                 </TouchableOpacity>
               </View>
@@ -517,6 +624,123 @@ const Map = props => {
           </View>
         </View>
       </Modal>
+      {modalVisible6 && (
+        <Modal
+          animationType="none"
+          transparent={true}
+          onRequestClose={() => {
+            setModalVisible6(!modalVisible6);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <CrossIcon
+                style={{
+                  position: 'absolute',
+                  top: 10,
+                  right: 10,
+                }}
+                height={25}
+                width={25}
+                onPress={() => {
+                  setModalVisible6(!modalVisible6);
+                }}
+                color={Constants.black}
+              />
+              <Text style={styles.textStyle}>
+                Please upload your delivery image
+              </Text>
+              <View style={{ height: 150 }}>
+                <ScrollView
+                  style={{ flexDirection: 'row', marginVertical: 15,marginHorizontal:10 }}
+                  horizontal={true}
+                  showsHorizontalScrollIndicator={false}
+                >
+                  <TouchableOpacity
+                    style={styles.uploadbox}
+                    onPress={() => cameraRef.current.show()}
+                  >
+                    <View style={styles.uplodiconcov}>
+                      <Upload2Icon
+                        color={Constants.normal_green}
+                        height={20}
+                        width={20}
+                      />
+                    </View>
+                    <Text style={styles.uploadtxt}>Add</Text>
+                  </TouchableOpacity>
+                  {images &&
+                    images.length > 0 &&
+                    images.map((item, i) => (
+                      <View key={i}>
+                        <Cross2Icon
+                          color={Constants.red}
+                          height={15}
+                          width={15}
+                          style={{
+                            position: 'absolute',
+                            zIndex: 10,
+                            right: 0,
+                          }}
+                          onPress={() =>
+                            setImages(prev =>
+                              prev.filter(it => it?.uri !== item?.uri),
+                            )
+                          }
+                        />
+                        <Image
+                          source={{ uri: item?.uri }}
+                          style={styles.imgcov}
+                          resizeMode="contain"
+                        />
+                      </View>
+                    ))}
+                </ScrollView>
+              </View>
+              <Text style={styles.textStyle2}>
+                Please signature from customer
+              </Text>
+                <Signature
+                  ref={signRef}
+                  onOK={handleSignature}
+                  descriptionText="Sign"
+                  onEmpty={() => {console.log('Empty'),setToast('Please provide signature')}}
+                  autoClear={false}
+                  webStyle={`.m-signature-pad--footer {display: none; margin: 0px;}`}
+                />
+                 <TouchableOpacity
+                  style={styles.clearstl}
+                  onPress={() =>handleClear()}>
+                  <Text style={styles.modalText}>Clear</Text>
+                </TouchableOpacity>
+              <View style={styles.cancelAndLogoutButtonWrapStyle}>
+                <TouchableOpacity
+                  activeOpacity={0.9}
+                  style={styles.logOutButtonStyle}
+                  onPress={() => {
+                   signRef.current.readSignature()
+                  }}
+                >
+                  <Text style={styles.modalText}>Submit</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      )}
+      <CameraGalleryPeacker
+        refs={cameraRef}
+        getImageValue={async img => {
+          const imgobj = {
+            uri: img.assets[0].uri,
+            type: img.assets[0].type,
+            name: img.assets[0].fileName,
+          };
+          setImages(prevImages => [...prevImages, imgobj]);
+        }}
+        base64={false}
+        cancel={() => {}}
+      />
     </View>
   );
 };
@@ -611,7 +835,7 @@ const styles = StyleSheet.create({
     color: Constants.custom_yellow,
     fontSize: 14,
     fontFamily: FONTS.Bold,
-    textDecorationLine:'underline'
+    textDecorationLine: 'underline',
   },
   signInbtn: {
     height: 50,
@@ -624,7 +848,7 @@ const styles = StyleSheet.create({
     // marginBottom: 20,
     alignSelf: 'center',
     position: 'absolute',
-    bottom: 20
+    bottom: 20,
   },
   buttontxt: {
     color: Constants.white,
@@ -639,30 +863,37 @@ const styles = StyleSheet.create({
     backgroundColor: '#rgba(0, 0, 0, 0.5)',
   },
   modalView: {
-    margin: 20,
+    marginHorizontal: 20,
+    marginVertical: 80,
     backgroundColor: 'white',
     borderRadius: 10,
     paddingVertical: 20,
-    alignItems: 'center',
-    width: '90%',
-    // shadowColor: '#000',
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 2,
-    // },
-    // shadowOpacity: 0.25,
-    // shadowRadius: 4,
-    // elevation: 5,
-    // position: 'relative',
+    width: '95%',
+    flex: 1,
+  },
+  modalView2: {
+    marginHorizontal: 20,
+    marginVertical: 80,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    paddingVertical: 20,
+    width: '95%',
   },
 
   textStyle: {
     color: Constants.black,
     // fontWeight: 'bold',
     textAlign: 'center',
-    fontFamily: FONTS.Medium,
+    fontFamily: FONTS.SemiBold,
     fontSize: 16,
     margin: 20,
+    marginBottom: 10,
+  },
+  textStyle2: {
+    color: Constants.black,
+    textAlign: 'center',
+    fontFamily: FONTS.SemiBold,
+    fontSize: 16,
     marginBottom: 10,
   },
   cancelAndLogoutButtonWrapStyle: {
@@ -700,6 +931,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
   },
+  clearstl: {
+    backgroundColor: Constants.blue,
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+    marginTop: 10,
+    alignSelf:'flex-end'
+  },
   logOutButtonStyle: {
     flex: 0.5,
     backgroundColor: Constants.custom_yellow,
@@ -724,10 +966,10 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   waigh: {
-      color: Constants.white,
-      fontSize: 12,
-      fontFamily: FONTS.SemiBold,
-    },
+    color: Constants.white,
+    fontSize: 12,
+    fontFamily: FONTS.SemiBold,
+  },
   shadowProp: {
     boxShadow: '0px 0px 8px 0.05px grey',
   },
@@ -742,5 +984,56 @@ const styles = StyleSheet.create({
     // alignItems: 'center',
     padding: 20,
     // justifyContent:'space-between'
+  },
+
+  uploadbox: {
+    width: 100,
+    height: 100,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: Constants.customgrey2,
+    borderStyle: 'dashed',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  imgcov: {
+    width: 100,
+    height: 100,
+    borderRadius: 20,
+    marginLeft: 5,
+  },
+  uploadtxt: {
+    color: Constants.black,
+    fontSize: 14,
+    fontFamily: FONTS.Medium,
+  },
+  uplodiconcov: {
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+    backgroundColor: '#bcb8cc',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 10,
+  },
+  sigboxcov: {
+    flexDirection: 'row',
+    height: 100,
+    // marginVertical: 15,
+    justifyContent: 'center',
+  },
+  imgstyle2: {
+    height: '100%',
+    width: '100%',
+    resizeMode: 'contain',
+  },
+  uploadbox2: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  uploadimgbox: {
+    flex: 1,
+    alignItems: 'center',
+    // backgroundColor:Constants.red
   },
 });

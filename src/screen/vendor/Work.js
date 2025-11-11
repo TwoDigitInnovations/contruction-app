@@ -21,12 +21,8 @@ import moment from 'moment';
 const Work = () => {
   const [modalVisible, setModalVisible] = useState(null);
   const [assignmodel, setassignmodel] = useState(false);
-  const dumydata = [
-    {name: 'hello'},
-    {name: 'hello'},
-    {name: 'hello'},
-    {name: 'hello'},
-  ];
+  const [assignmodel2, setassignmodel2] = useState(false);
+  const [currentStatus, setcurrentStatus] = useState();
   const [orderlist, setorderlist] = useState();
   const [toast, setToast] = useContext(ToastContext);
   const [loading, setLoading] = useContext(LoadContext);
@@ -69,10 +65,10 @@ const Work = () => {
     }
   };
 
-  const assigdriver = id => {
+  const assigdriver = (id,status) => {
     const body={
-      id:id,
-      status:'Driverassigned'
+      id,
+      status
     }
     setLoading(true);
     Post(`changeorderstatus`, body).then(
@@ -109,7 +105,8 @@ const Work = () => {
                           ? '#E9FFE9'
                           : '#FFF6D8',
                     },
-                  ]}>
+                  ]}
+                  onPress={()=>item.status === 'Accepted'?navigate('OrderDetail', item):navigate('VenderOrders', item._id)}>
                   <View
                     style={{
                       flexDirection: 'row',
@@ -170,6 +167,17 @@ const Work = () => {
                         <Text style={styles.amount}>{Currency} {item?.price}</Text>
                       </View>
                   </View>
+                 {item.status === 'Pending' && <View style={styles.cancelAndLogoutButtonWrapStyle2}>
+                                    <TouchableOpacity style={styles.cancelButtonStyle} onPress={()=>{setcurrentStatus('Reject'),setassignmodel2(true),setorderid(item?._id)}}>
+                                      <Text
+                                        style={[styles.modalText, {color: Constants.custom_yellow}]}>
+                                        Reject
+                                      </Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.acceptButtonStyle} onPress={()=>{setcurrentStatus('Accept'),setassignmodel2(true),setorderid(item?._id)}}>
+                                      <Text style={styles.modalText}>Accept</Text>
+                                    </TouchableOpacity>
+                                  </View>}
                 </TouchableOpacity>
 
                 {modalVisible === item._id && (
@@ -178,7 +186,7 @@ const Work = () => {
                     onPress={() => setModalVisible(null)}>
                     <View style={styles.centeredView}>
                       <View style={styles.modalView}>
-                        {item.status === 'Pending' && (
+                        {item.status === 'Accepted' && (
                           <TouchableOpacity
                             style={styles.popuplistcov}
                             onPress={() => {
@@ -259,7 +267,6 @@ const Work = () => {
         transparent={true}
         visible={assignmodel}
         onRequestClose={() => {
-          // Alert.alert('Modal has been closed.');
           setassignmodel(!assignmodel);
         }}>
         <View style={styles.centeredView2}>
@@ -291,7 +298,51 @@ const Work = () => {
                   activeOpacity={0.9}
                   style={styles.logOutButtonStyle}
                   onPress={() => {
-                    assigdriver(orderid), setassignmodel(false);
+                    assigdriver(orderid,'Driverassigned'), setassignmodel(false);
+                  }}>
+                  <Text style={styles.modalText}>Yes</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={assignmodel2}
+        onRequestClose={() => {
+          setassignmodel2(!assignmodel2);
+        }}>
+        <View style={styles.centeredView2}>
+          <View style={styles.modalView2}>
+            <View
+              style={{
+                backgroundColor: 'white',
+                alignItems: 'center',
+                paddingHorizontal: 30,
+              }}>
+              <Text style={styles.textStyle}>
+                Are you sure you want to {currentStatus} this order !
+              </Text>
+              <View style={styles.cancelAndLogoutButtonWrapStyle}>
+                <TouchableOpacity
+                  activeOpacity={0.9}
+                  onPress={() => setassignmodel2(!assignmodel2)}
+                  style={styles.cancelButtonStyle}>
+                  <Text
+                    style={[
+                      styles.modalText,
+                      {color: Constants.custom_yellow},
+                    ]}>
+                    No
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  activeOpacity={0.9}
+                  style={styles.logOutButtonStyle}
+                  onPress={() => {
+                    assigdriver(orderid,currentStatus==='Reject'?'Rejected':'Accepted'), setassignmodel2(false);
                   }}>
                   <Text style={styles.modalText}>Yes</Text>
                 </TouchableOpacity>
@@ -513,4 +564,47 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   ////////end////////
+
+  cancelAndLogoutButtonWrapStyle2: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      // marginTop: 10,
+      gap: 3,
+    },
+    cancelButtonStyle: {
+      flex: 0.5,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 15,
+      marginRight: 10,
+      borderColor: Constants.custom_yellow,
+      borderWidth: 1,
+      borderRadius: 10,
+    },
+    acceptButtonStyle: {
+      flex: 0.5,
+      backgroundColor: Constants.custom_yellow,
+      borderRadius: 10,
+      paddingVertical: 10,
+      paddingHorizontal: 5,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginLeft: 10,
+    },
+    logOutButtonStyle: {
+      flex: 0.5,
+      backgroundColor: Constants.custom_yellow,
+      borderRadius: 10,
+      paddingVertical: 15,
+      paddingHorizontal: 5,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginLeft: 10,
+    },
+    modalText: {
+      color: Constants.white,
+      fontFamily: FONTS.SemiBold,
+      fontSize: 14,
+    },
 });
