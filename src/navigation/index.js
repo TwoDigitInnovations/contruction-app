@@ -24,6 +24,7 @@ import { Drivertab } from './DriverTab';
 import ProductDetail from '../screen/app/ProductDetail';
 import RateReview from '../screen/app/RateReview';
 import CheckOut from '../screen/app/CheckOut';
+import Faq from '../screen/app/Faq';
 import OrderDetail from '../screen/vendor/OrderDetail';
 import Map from '../screen/driver/Map';
 import DriverOrder from '../screen/driver/DriverOrder';
@@ -35,6 +36,8 @@ import DriverTransactionHistory from '../screen/driver/TransactionHistory';
 import VendorForm from '../screen/vendor/VendorForm';
 import VendorAccount from '../screen/vendor/VendorAccount';
 import VendorProfile from '../screen/vendor/VendorProfile';
+import VendorHistory from '../screen/vendor/VendorHistory';
+import DriverHistory from '../screen/driver/DriverHistory';
 
 
 
@@ -87,13 +90,16 @@ export default function Navigation(props) {
         <Stack.Screen name="DriverOrder" component={DriverOrder} />
         <Stack.Screen name="VendorForm" component={VendorForm} />
         <Stack.Screen name="VendorAccount" component={VendorAccount} />
+        <Stack.Screen name="VendorHistory" component={VendorHistory} />
         <Stack.Screen name="VendorProfile" component={VendorProfile} />
         <Stack.Screen name="DriverForm" component={DriverForm} />
         <Stack.Screen name="DriverAccount" component={DriverAccount} />
         <Stack.Screen name="DriverProfile" component={DriverProfile} />
+        <Stack.Screen name="DriverHistory" component={DriverHistory} />
         <Stack.Screen name="RateReview" component={RateReview} />
         <Stack.Screen name="DriverWithdraw" component={DriverWithdraw} />
         <Stack.Screen name="DriverTransactionHistory" component={DriverTransactionHistory} />
+        <Stack.Screen name="Faq" component={Faq} />
         
    
       </Stack.Navigator>

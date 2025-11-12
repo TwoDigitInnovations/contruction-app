@@ -14,6 +14,8 @@ import Constants, {Currency, FONTS} from '../../Assets/Helpers/constant';
 import {
   AccountIcon,
   EditIcon,
+  FaqIcon,
+  HistoryIcon,
   HSIcon,
   LogoutIcon,
   PrivacyIcon,
@@ -131,6 +133,27 @@ const InAppBrowserFunc=async(props)=>{
                 style={{alignSelf: 'center'}}
               />
             </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.proopt}
+              onPress={() => navigate('DriverHistory')}>
+              <View style={styles.protxt3}>
+                <View style={styles.iconcov}>
+                  <HistoryIcon height={20} width={20} />
+                </View>
+                <View>
+                  <Text style={[styles.protxt]}>History</Text>
+                  <Text style={[styles.protxt4]}>
+                    Check your order history
+                  </Text>
+                </View>
+              </View>
+              <RightarrowIcon
+                color={Constants.customgrey}
+                height={20}
+                width={20}
+                style={{alignSelf: 'center'}}
+              />
+            </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.proopt}
@@ -142,6 +165,25 @@ const InAppBrowserFunc=async(props)=>{
                 <View>
                   <Text style={[styles.protxt]}>Help and Support</Text>
                   <Text style={[styles.protxt4]}>Cheak your notification</Text>
+                </View>
+              </View>
+              <RightarrowIcon
+                color={Constants.customgrey}
+                height={20}
+                width={20}
+                style={{alignSelf: 'center'}}
+              />
+            </TouchableOpacity>
+              <TouchableOpacity
+              style={styles.proopt}
+              onPress={()=>navigate('Faq')}>
+              <View style={styles.protxt3}>
+                <View style={styles.iconcov}>
+                  <FaqIcon height={20} width={20} />
+                </View>
+                <View>
+                  <Text style={[styles.protxt]}>Faq</Text>
+                  <Text style={[styles.protxt4]}>Find Answers to Your Questions</Text>
                 </View>
               </View>
               <RightarrowIcon
@@ -502,6 +544,7 @@ const styles = StyleSheet.create({
     width: '90%',
     marginVertical: 20,
     alignSelf: 'center',
+    marginBottom:90
   },
   iconcov: {
     backgroundColor: Constants.customgrey,

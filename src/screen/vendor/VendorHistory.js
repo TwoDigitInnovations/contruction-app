@@ -45,7 +45,7 @@ const getorderhistory = () => {
   return (
     <View style={styles.container}>
       <Header item={'History'} />
-      <View style={{flex:1,paddingBottom:70}}>
+      <View style={{flex:1}}>
       <FlatList
         data={orderlist}
         renderItem={({item},index) => (

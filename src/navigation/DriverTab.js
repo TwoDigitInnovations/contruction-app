@@ -1,11 +1,11 @@
 import React, {useCallback, useRef} from 'react';
 import {Animated, Dimensions, Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import { WorkIcon,HistorytabIcon } from '../../Theme';
+import { WorkIcon, Profile2Icon, Work2Icon } from '../../Theme';
 import Constants from '../Assets/Helpers/constant';
-import Reviews from '../screen/driver/Reviews';
 import DriverWork from '../screen/driver/DriverWork';
-import DriverHistory from '../screen/driver/DriverHistory';
+import MyOrders from '../screen/driver/MyOrders';
+import DriverAccount from '../screen/driver/DriverAccount';
 
 
 
@@ -15,25 +15,32 @@ export const  Drivertab=()=>{
  
   const TabArr = [
     {
-      iconActive: <WorkIcon color={Constants.custom_yellow} height={40} />,
-      iconInActive: <WorkIcon color={Constants.white} height={40} />,
+      iconActive: <WorkIcon color={Constants.custom_yellow} height={40} width={40}/>,
+      iconInActive: <WorkIcon color={Constants.white} height={40} width={40}/>,
       component: DriverWork,
       routeName: 'DriverWork',
       name: 'Work orders',
     },
     {
-      iconActive: <HistorytabIcon color={Constants.custom_yellow} height={40} />,
-      iconInActive: <HistorytabIcon color={Constants.white} height={40} />,
-      component: DriverHistory,
-      routeName: 'DriverHistory',
-      name: 'History',
+      iconActive: <Work2Icon color={Constants.custom_yellow} height={40} width={40}/>,
+      iconInActive: <Work2Icon color={Constants.white} height={40} width={40}/>,
+      component: MyOrders,
+      routeName: 'MyOrders',
+      name: 'My orders',
+    },
+    {
+      iconActive: <Profile2Icon color={Constants.custom_yellow} height={40} width={40}/>,
+      iconInActive: <Profile2Icon color={Constants.white} height={40} width={40}/>,
+      component: DriverAccount,
+      routeName: 'DriverAccount',
+      name: 'Account',
     },
     // {
     //   iconActive: <HistorytabIcon color={Constants.custom_yellow} height={40} />,
     //   iconInActive: <HistorytabIcon color={Constants.white} height={40} />,
-    //   component: Reviews,
-    //   routeName: 'Reviews',
-    //   name: 'Review',
+    //   component: DriverHistory,
+    //   routeName: 'DriverHistory',
+    //   name: 'History',
     // },
   ];
 

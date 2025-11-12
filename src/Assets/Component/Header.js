@@ -16,9 +16,9 @@ const Header = props => {
         </View>
         <TouchableOpacity onPress={()=>{
           if (user?.type==='VENDOR') {
-            navigate('VendorAccount')
+            navigate('Vendortab',{screen:'VendorAccount'})
           } else if (user?.type==='DRIVER'){
-            navigate('DriverAccount')
+            navigate('Drivertab',{screen:'DriverAccount'})
           } 
           else{
             navigate('App',{screen:'Profile'})

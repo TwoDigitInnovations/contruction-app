@@ -19,10 +19,8 @@ import { GetApi, Post } from '../../Assets/Helpers/Service';
 import { useIsFocused } from '@react-navigation/native';
 import moment from 'moment';
   
-  const DriverWork = () => {
+  const MyOrders = () => {
     const [modalVisible, setModalVisible] = useState(null);
-    const [acceptmodel, setacceptmodel] = useState(false);
-    const dumydata = [{name:'hello'}, {name:'hello'}, {name:'hello'}, {name:'hello'}];
 
     const [orderid, setorderid] = useState('');
         const [toast, setToast] = useContext(ToastContext);
@@ -31,19 +29,14 @@ import moment from 'moment';
         const [orderlist,setorderlist]=useState([])
           const IsFocused = useIsFocused();
           useEffect(() => {
-            if (IsFocused&&user?.verified==='VERIFIED') {
-              nearbylocation();
+            if (IsFocused) {
+              acceptedorderfordriver();
             }
           }, [IsFocused]);
 
-        const nearbylocation = () => {
-          CuurentLocation(res => {
-            const data2 = {
-              location: [Number(res.coords.longitude), Number(res.coords.latitude)]
-            };
-            console.log('data==========>', data2);
+        const acceptedorderfordriver = () => {
             setLoading(true);
-            Post('nearbyorderfordriver', data2, {}).then(
+            GetApi('acceptedorderfordriver', {}).then(
               async res => {
                 setLoading(false);
                 console.log('$%#@^&**', res);
@@ -55,42 +48,19 @@ import moment from 'moment';
                 console.log(err);
               },
             );
-          });
         };
 
         
-          const Acceptorder = (id) => {
-            setLoading(true);
-            Post(`acceptorderdriver/${id}`, {}).then(
-              async res => {
-                setLoading(false);
-                console.log(res);
-                if (res?.status) {
-                  nearbylocation()
-                  
-                } else {
-                  if (res?.message) {
-                    setToast(res?.message)
-                  }
-                }
-              },
-              err => {
-                setLoading(false);
-                console.log(err);
-              },
-            );
-          };
 
     return (
       <View style={styles.container}>
-        <Header item={'Orders'} />
-        {user?.verified==='VERIFIED'?
+        <Header item={'My Orders'} />
         <FlatList
           data={orderlist}
           showsVerticalScrollIndicator={false}
           renderItem={({item,index}) =><View key={index}>
               <TouchableOpacity
-                style={[styles.box,{marginBottom:orderlist.length-1===index?80:10}]}
+                style={[styles.box,{marginBottom:orderlist?.length-1===index?80:10}]}
                 onPress={() => navigate('Map', {
               orderid: item._id,
               type: item.status==='Collected'?'client':'shop',
@@ -100,7 +70,6 @@ import moment from 'moment';
                   style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                   <View style={{flexDirection: 'row'}}>
                     <Image
-                      // source={require('../../Assets/Images/profile.png')}
                       source={
                         item?.user?.img
                           ? {
@@ -109,7 +78,6 @@ import moment from 'moment';
                           : require('../../Assets/Images/profile.png')
                       }
                       style={styles.hi}
-                      // onPress={()=>navigate('Account')}
                     />
                     <View>
                       <Text style={styles.name}>{item?.user?.username}</Text>
@@ -142,17 +110,6 @@ import moment from 'moment';
                       <Text style={styles.secendtxt}> {item?.inputvalue?`${item?.inputvalue} ${item?.selectedAtribute?.unit}`:item?.product?.categoryname}</Text>
                   </View>
                   <Text style={styles.amount}>{Currency} {item?.deliveryfee}</Text>
-                </View>
-                <View style={styles.cancelAndLogoutButtonWrapStyle2}>
-                  {/* <TouchableOpacity style={styles.cancelButtonStyle}>
-                    <Text
-                      style={[styles.modalText, {color: Constants.custom_yellow}]}>
-                      Reject
-                    </Text>
-                  </TouchableOpacity> */}
-                  {!item?.driver&&<TouchableOpacity style={styles.acceptButtonStyle} onPress={()=>{setacceptmodel(true),setorderid(item?._id)}}>
-                    <Text style={styles.modalText}>Accept</Text>
-                  </TouchableOpacity>}
                 </View>
               </TouchableOpacity>
              
@@ -202,68 +159,12 @@ import moment from 'moment';
               </Text>
             </View>
           )}
-        />:
-        <View
-                    style={{
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      height: Dimensions.get('window').height - 300,
-                    }}>
-                    <Image
-                      source={require('../../Assets/Images/waiting.png')}
-                      style={{alignSelf: 'center', height: 200, width: 200}}
-                    />
-                    <Text style={styles.empttxt}>You are not verified yet.</Text>
-        <Text style={styles.empttxt2}>
-          Please wait for the verification to complete. It may take 3–5 business days.
-        </Text>
-        
-                  </View>}
-        <Modal
-          animationType="none"
-          transparent={true}
-          visible={acceptmodel}
-          onRequestClose={() => {
-            // Alert.alert('Modal has been closed.');
-            setacceptmodel(!acceptmodel);
-          }}>
-          <View style={styles.centeredView2}>
-            <View style={styles.modalView2}>
-              <Text style={styles.alrt}>Alert !</Text>
-              <View
-                style={{
-                  backgroundColor: 'white',
-                  alignItems: 'center',
-                  paddingHorizontal: 30,
-                }}>
-                <Text style={styles.textStyle}>
-                  Are you sure you want to Accept this ride to delivery !
-                </Text>
-                <View style={styles.cancelAndLogoutButtonWrapStyle}>
-                  <TouchableOpacity
-                    activeOpacity={0.9}
-                    onPress={() => setacceptmodel(!acceptmodel)}
-                    style={styles.cancelButtonStyle}>
-                    <Text
-                      style={[styles.modalText, {color: Constants.custom_yellow}]}>
-                      No
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    activeOpacity={0.9}
-                    style={styles.logOutButtonStyle} onPress={()=>{Acceptorder(orderid),setacceptmodel(false)}}>
-                    <Text style={styles.modalText}>Yes</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          </View>
-        </Modal>
+        />
       </View>
     );
   };
   
-  export default DriverWork;
+  export default MyOrders;
   
   const styles = StyleSheet.create({
     container: {

@@ -1,11 +1,12 @@
 import React, {useCallback, useRef} from 'react';
 import {Animated, Dimensions, Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import { WorkIcon,HistorytabIcon, ProductsIcon } from '../../Theme';
+import { WorkIcon,HistorytabIcon, ProductsIcon, Profile2Icon } from '../../Theme';
 import Constants from '../Assets/Helpers/constant';
 import Work from '../screen/vendor/Work';
 import VendorHistory from '../screen/vendor/VendorHistory';
 import Products from '../screen/vendor/Products';
+import VendorAccount from '../screen/vendor/VendorAccount';
 
 
 
@@ -29,11 +30,11 @@ export const  Vendortab=()=>{
       name: 'Products',
     },
     {
-      iconActive: <HistorytabIcon color={Constants.custom_yellow} height={40} />,
-      iconInActive: <HistorytabIcon color={Constants.white} height={40} />,
-      component: VendorHistory,
-      routeName: 'VendorHistory',
-      name: 'History',
+      iconActive: <Profile2Icon color={Constants.custom_yellow} height={40} width={40}/>,
+      iconInActive: <Profile2Icon color={Constants.white} height={40} width={40}/>,
+      component: VendorAccount,
+      routeName: 'VendorAccount',
+      name: 'Account',
     },
   ];
 

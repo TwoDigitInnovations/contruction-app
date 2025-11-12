@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: FONTS.SemiBold,
     color: Constants.custom_yellow,
-    width: '55%',
+    width: '50%',
     textAlign: 'right',
   },
   headamt: {

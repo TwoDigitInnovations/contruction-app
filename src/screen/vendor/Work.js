@@ -586,7 +586,7 @@ const styles = StyleSheet.create({
       flex: 0.5,
       backgroundColor: Constants.custom_yellow,
       borderRadius: 10,
-      paddingVertical: 10,
+      paddingVertical: 15,
       paddingHorizontal: 5,
       alignItems: 'center',
       justifyContent: 'center',

@@ -3,6 +3,7 @@ import {
   Easing,
   Image,
   ImageBackground,
+  Linking,
   Modal,
   PermissionsAndroid,
   Platform,
@@ -38,6 +39,7 @@ import { LoadContext, ToastContext } from '../../../App';
 import { GetApi, Post, PostWithImage } from '../../Assets/Helpers/Service';
 import Header from '../../Assets/Component/Header';
 import {
+  CallIcon,
   Cross2Icon,
   CrossIcon,
   TickIcon,
@@ -51,7 +53,7 @@ import ReactNativeBlobUtil from 'react-native-blob-util';
 
 const Map = props => {
   const data = props?.route?.params?.orderid;
-  const locationtpye = props?.route?.params?.type;
+  // let locationtype = props?.route?.params?.type;
   // console.log(data);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
@@ -59,15 +61,11 @@ const Map = props => {
   const [modalVisible6, setModalVisible6] = useState(false);
   const [toast, setToast] = useContext(ToastContext);
   const [loading, setLoading] = useContext(LoadContext);
-  const [from, setFrom] = useState('');
   const [location, setlocation] = useState(null);
   const [destination, setdestination] = useState(null);
-  const [locationadd, setlocationadd] = useState(null);
-  const [destinationadd, setdestinationadd] = useState(null);
+  const [locationtype, setlocationtype] = useState(props?.route?.params?.type);
   const [per, setper] = useState(null);
   const [orderdetail, setorderdetail] = useState();
-  const [cheakimg, setcheakimg] = useState('');
-  const [signimg, setSignimg] = useState();
   const [images, setImages] = useState([]);
 
   const cameraRef = useRef();
@@ -134,14 +132,14 @@ const Map = props => {
   };
 
   console.log(destination);
-  const MyOrders = () => {
+  const MyOrders = (prp) => {
     setLoading(true);
     GetApi(`getOrderById/${data}`, {}).then(
       async res => {
         setLoading(false);
         console.log(res);
         setorderdetail(res.data);
-        if (locationtpye === 'shop') {
+        if (locationtype === 'shop'&&!prp) {
           setdestination({
             latitude: Number(res?.data?.vendor?.location?.coordinates[1]),
             longitude: Number(res?.data?.vendor?.location?.coordinates[0]),
@@ -149,6 +147,7 @@ const Map = props => {
             longitudeDelta: 0.0121,
           });
         } else {
+          console.log("client location set");
           setdestination({
             latitude: Number(res?.data?.location?.coordinates[1]),
             longitude: Number(res?.data?.location?.coordinates[0]),
@@ -187,7 +186,8 @@ const Map = props => {
         setLoading(false);
         console.log(res);
         if (res.status) {
-          MyOrders();
+          setlocationtype('client');
+          MyOrders(true);
         }
       },
       err => {
@@ -344,19 +344,18 @@ const base64ToBlobWithRNBU = async (base64Data, mimeType = 'image/png') => {
         <View style={styles.box}>
           <View style={{ flexDirection: 'row' }}>
             <Image
-              // source={require('../../Assets/Images/profile4.png')}
               source={
-                orderdetail?.user?.img
+                (orderdetail?.user?.img||orderdetail?.vendor?.img)
                   ? {
-                      uri: `${orderdetail?.user?.img}`,
+                      uri: locationtype === 'shop'?orderdetail?.vendor?.img:orderdetail?.user?.img,
                     }
                   : require('../../Assets/Images/profile.png')
               }
               style={styles.hi}
-              // onPress={()=>navigate('Account')}
             />
             <View>
-              <Text style={styles.name}>{orderdetail?.user?.username}</Text>
+              <Text style={styles.name}>{locationtype === 'shop'
+                    ? orderdetail?.vendor.shop_name:orderdetail?.user?.username}</Text>
               <View
                 style={{ flexDirection: 'row', gap: 7, alignItems: 'center' }}
               >
@@ -377,26 +376,22 @@ const base64ToBlobWithRNBU = async (base64Data, mimeType = 'image/png') => {
           </View>
           <View style={styles.secendpart}>
             <Text style={styles.secendboldtxt}>Location : </Text>
-            <Text style={styles.secendtxt2}>{orderdetail?.user?.address}</Text>
+            <Text style={styles.secendtxt2}>{locationtype === 'shop'?orderdetail?.vendor?.address:orderdetail?.user?.address}</Text>
           </View>
-          {/* <View style={styles.txtcol}>
-            <View style={styles.secendpart}>
-              <Text style={styles.secendboldtxt}>QTY : </Text>
-              <Text style={styles.secendtxt}>{orderdetail?.qty}</Text>
-            </View>
-          </View> */}
           <View style={styles.txtcol}>
-            <View style={{}}>
               <View style={styles.secendpart}>
                 <Text style={styles.secendboldtxt}>Category : </Text>
                 <Text style={styles.secendtxt}>
                   {orderdetail?.product?.categoryname}
                 </Text>
               </View>
-            </View>
             <Text style={styles.amount}>
               {Currency} {orderdetail?.deliveryfee}
             </Text>
+          </View>
+          <View style={[styles.txtcol,{alignItems:'center'}]}>
+            <Text style={styles.redeembtn2}>{locationtype === 'shop'?"Seller":orderdetail?.status}</Text>
+          <CallIcon color={Constants.custom_yellow} height={20} width={20} onPress={() => Linking.openURL(locationtype === 'shop'?`tel:${orderdetail?.vendor?.phone}`:`tel:${orderdetail?.user?.phone}`)}/>
           </View>
         </View>
         <View
@@ -463,7 +458,7 @@ const base64ToBlobWithRNBU = async (base64Data, mimeType = 'image/png') => {
           style={styles.signInbtn}
           onPress={() => setModalVisible(true)}
         >
-          <Text style={styles.buttontxt}>Start Ride</Text>
+          <Text style={styles.buttontxt}>Collect Load</Text>
         </TouchableOpacity>
       )}
       {orderdetail?.status === 'Driverassigned' && !orderdetail.driver && (
@@ -494,7 +489,7 @@ const base64ToBlobWithRNBU = async (base64Data, mimeType = 'image/png') => {
               }}
             >
               <Text style={styles.textStyle}>
-                Are you sure you want to Start this ride !
+                Are you sure you have collected the load ?
               </Text>
               <View style={styles.cancelAndLogoutButtonWrapStyle}>
                 <TouchableOpacity
@@ -788,6 +783,18 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     marginVertical: 7,
     borderRadius: 8,
+  },
+  redeembtn2: {
+    color: Constants.white,
+    fontSize: 16,
+    fontFamily: FONTS.Medium,
+    lineHeight:20,
+    backgroundColor: Constants.custom_yellow,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    marginVertical: 7,
+    borderRadius: 8,
+    textAlign: 'center',
   },
   name: {
     color: Constants.black,
