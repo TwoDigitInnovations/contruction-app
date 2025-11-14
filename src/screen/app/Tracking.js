@@ -323,7 +323,7 @@ useEffect(() => {
             </View>
           </View>
         </View>
-        {<TouchableOpacity
+        {orderData?.status==='Delivered'&&<TouchableOpacity
             onPress={()=>navigate('RateReview',orderData)}
               style={styles.frow}>
               <View style={styles.listcov}>
@@ -342,7 +342,7 @@ useEffect(() => {
                 width={15}
               />
             </TouchableOpacity>}
-            {<TouchableOpacity
+            {orderData?.status==='Delivered'&&<TouchableOpacity
               style={styles.contactopt}
               onPress={() =>
                 getinvoice()

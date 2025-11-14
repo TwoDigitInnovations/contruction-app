@@ -36,10 +36,6 @@ const Orders = () => {
        getorders(1)
      }
    }, [IsFocused]);
-  const dumydata = [
-    {'xyz':'xyz2'},
-    {xyz:'xyz'},
-  ];
   const getorders = (p) => {
     setPage(p);
     setLoading(true);
@@ -77,9 +73,9 @@ const Orders = () => {
         <FlatList
           data={orderlist}
           showsVerticalScrollIndicator={false}
-          renderItem={({item},i) => (
+          renderItem={({item,index}) => (
             <TouchableOpacity
-              style={[styles.inputbox, styles.shadowProp,{marginBottom:dumydata.length ==i+1?150:10}]}
+              style={[styles.inputbox, styles.shadowProp,{marginBottom:orderlist.length ==index+1?130:0}]}
               onPress={() => navigate('Tracking',item?._id)}>
               <View style={[styles.inrshabox, styles.shadowProp2]}>
                 <View style={{flexDirection: 'row', gap: 10}}>
@@ -141,7 +137,7 @@ const styles = StyleSheet.create({
   },
   imgbg: {
     flex: 1,
-    paddingTop: 30,
+    // paddingTop: 30,
   },
   inputbox: {
     backgroundColor: Constants.custom_black,
@@ -150,7 +146,7 @@ const styles = StyleSheet.create({
     width: '90%',
     alignSelf: 'center',
     padding: 7,
-    // height: 80,
+    marginTop: 15,
   },
   shadowProp: {
     boxShadow: '0px 0px 8px 0.05px grey',
