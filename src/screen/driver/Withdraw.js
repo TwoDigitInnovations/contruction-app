@@ -160,7 +160,7 @@ const DriverWithdraw = () => {
                 keyboardType="number-pad"
                 style={[
                   styles.textinp,
-                  Platform.OS === 'ios' && { lineHeight: 30 },
+                  Platform.OS === 'ios' && { lineHeight: 28 },
                 ]}
                 value={amount}
                 onChangeText={e => setamount(e)}
@@ -358,6 +358,7 @@ const styles = StyleSheet.create({
     color: Constants.white,
     marginLeft: 20,
     marginTop: 25,
+    marginBottom:Platform.OS === 'ios' ?10:5
   },
   textinp: {
     color: Constants.white,

@@ -133,7 +133,7 @@ const Account = () => {
   };
   console.log('img', userDetail.img);
   const cancel = () => {
-    setEdit(false);
+    // setEdit(false);
   };
   return (
     <View style={[styles.container]}>

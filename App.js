@@ -103,6 +103,13 @@ const App = () => {
                   latitude: position.coords.latitude,
                   longitude: position.coords.longitude,
                 });
+                GetCurrentAddressByLatLong({
+                lat: position.coords.latitude,
+                long: position.coords.longitude,
+              }).then(res => {
+                console.log('res===>', res);
+                setlocationadd(res.results[0].formatted_address);
+              });
               },
               error => {
                 console.log(error.code, error.message);
@@ -256,7 +263,7 @@ useEffect(() => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Constants.black,
+    backgroundColor: Constants.custom_black,
   },
 });
 

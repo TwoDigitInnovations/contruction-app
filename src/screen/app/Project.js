@@ -301,6 +301,7 @@ const Project = () => {
                   <TextInput
                     placeholder="Start Date"
                     style={[styles.input2]}
+                    onPress={() => setOpen(true)}
                     value={moment(projectdata?.startdate).format('DD/MM/YYYY ')}
                     editable={false}
                     placeholderTextColor={Constants.customgrey2}

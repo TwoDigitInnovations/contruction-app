@@ -346,6 +346,9 @@ const Products = () => {
                         <Dropdown
                           ref={dropdownRef2}
                           data={unitData}
+                          // dropdownPosition="bottom"
+                          // flatListProps={{ contentContainerStyle: { padding: 0 } }}
+                          // containerStyle={[styles.dropdownContainer, { top: 0 }]}
                           labelField="name"
                           valueField="value"
                           placeholder="Select Unit"

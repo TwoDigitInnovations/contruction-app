@@ -45,7 +45,7 @@ const SignUp = props => {
     type: 'USER',
   });
   useEffect(() => {
-    CustomCurrentLocation();
+    // CustomCurrentLocation();
   }, []);
   const submit = () => {
     if (

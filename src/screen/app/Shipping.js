@@ -137,7 +137,6 @@ setLoading(true)
       >
         <ScrollView
           showsVerticalScrollIndicator={false}
-          style={{ marginTop: 20 }}
           keyboardShouldPersistTaps="handled"
         >
           <Text style={styles.name}>Full Name</Text>

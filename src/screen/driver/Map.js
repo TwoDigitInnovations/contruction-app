@@ -89,7 +89,12 @@ const Map = props => {
           if (result === 'granted') {
             Geolocation.getCurrentPosition(
               position => {
-                // setlocation(position);
+                setlocation({
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                latitudeDelta: 0.015,
+                longitudeDelta: 0.0121,
+              });
                 console.log(position);
               },
               error => {
